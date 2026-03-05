@@ -1,0 +1,15 @@
+.project-manager {
+  padding: 16px 0;
+}
+
+.manager-header {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.create-form {
+  padding: 16px;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
