@@ -28,6 +28,27 @@ export interface VideoTask {
   createdAt: number;
 }
 
+// 剪辑片段
+export interface Clip {
+  id: string;
+  videoId: string;
+  videoUrl: string;
+  startTime: number;
+  endTime: number;
+  duration: number;
+  thumbnail?: string;
+}
+
+// 音频轨道
+export interface AudioTrack {
+  id: string;
+  type: 'music' | 'effect';
+  name: string;
+  startTime: number;
+  duration: number;
+  volume: number;
+}
+
 // 剧本项目
 export interface ScriptProject {
   id: string;
@@ -80,6 +101,13 @@ interface CreatorState {
   videoTasks: VideoTask[];
   isVideoLoading: boolean;
   
+  // 视频剪辑
+  clips: Clip[];
+  audioTracks: AudioTrack[];
+  currentTime: number;
+  isPlaying: boolean;
+  totalDuration: number;
+  
   // Actions
   setCurrentProject: (project: ScriptProject | null) => void;
   addScriptMessage: (message: ScriptMessage) => void;
@@ -88,6 +116,18 @@ interface CreatorState {
   updateImageTask: (id: string, updates: Partial<ImageTask>) => void;
   addVideoTask: (task: VideoTask) => void;
   updateVideoTask: (id: string, updates: Partial<VideoTask>) => void;
+  
+  // 剪辑相关
+  addClip: (clip: Clip) => void;
+  removeClip: (id: string) => void;
+  updateClip: (id: string, updates: Partial<Clip>) => void;
+  addAudioTrack: (track: AudioTrack) => void;
+  removeAudioTrack: (id: string) => void;
+  updateAudioTrack: (id: string, updates: Partial<AudioTrack>) => void;
+  setCurrentTime: (time: number) => void;
+  setIsPlaying: (playing: boolean) => void;
+  setTotalDuration: (duration: number) => void;
+  
   clearHistory: () => void;
 }
 
@@ -99,6 +139,13 @@ export const useCreatorStore = create<CreatorState>((set) => ({
   isImageLoading: false,
   videoTasks: [],
   isVideoLoading: false,
+  
+  // 剪辑状态
+  clips: [],
+  audioTracks: [],
+  currentTime: 0,
+  isPlaying: false,
+  totalDuration: 60,
 
   setCurrentProject: (project) => set({ currentProject: project }),
   
@@ -128,9 +175,45 @@ export const useCreatorStore = create<CreatorState>((set) => ({
     )
   })),
 
+  // 剪辑操作
+  addClip: (clip) => set((state) => ({
+    clips: [...state.clips, clip]
+  })),
+  
+  removeClip: (id) => set((state) => ({
+    clips: state.clips.filter(c => c.id !== id)
+  })),
+  
+  updateClip: (id, updates) => set((state) => ({
+    clips: state.clips.map(c =>
+      c.id === id ? { ...c, ...updates } : c
+    )
+  })),
+  
+  addAudioTrack: (track) => set((state) => ({
+    audioTracks: [...state.audioTracks, track]
+  })),
+  
+  removeAudioTrack: (id) => set((state) => ({
+    audioTracks: state.audioTracks.filter(t => t.id !== id)
+  })),
+  
+  updateAudioTrack: (id, updates) => set((state) => ({
+    audioTracks: state.audioTracks.map(t =>
+      t.id === id ? { ...t, ...updates } : t
+    )
+  })),
+  
+  setCurrentTime: (time) => set({ currentTime: time }),
+  setIsPlaying: (playing) => set({ isPlaying: playing }),
+  setTotalDuration: (duration) => set({ totalDuration: duration }),
+
   clearHistory: () => set({
     scriptMessages: [],
     imageTasks: [],
-    videoTasks: []
+    videoTasks: [],
+    clips: [],
+    audioTracks: [],
+    currentTime: 0
   })
 }));

@@ -1,0 +1,303 @@
+.video-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #1a1a1a;
+  color: #fff;
+  overflow: hidden;
+}
+
+/* 工具栏 */
+.editor-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background: #2a2a2a;
+  border-bottom: 1px solid #3a3a3a;
+}
+
+.time-display {
+  color: #1890ff;
+  font-family: monospace;
+  font-size: 14px;
+}
+
+/* 主编辑区 */
+.editor-main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* 预览区 */
+.preview-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0a0a;
+  padding: 16px;
+}
+
+.preview-video {
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 16/9;
+  background: #1a1a1a;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.preview-video .hint {
+  color: #666;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+/* 素材区 */
+.assets-section {
+  width: 240px;
+  background: #242424;
+  border-left: 1px solid #3a3a3a;
+  display: flex;
+  flex-direction: column;
+}
+
+.assets-section .ant-tabs {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.assets-section .ant-tabs-content {
+  flex: 1;
+  overflow: hidden;
+}
+
+.assets-section .ant-tabs-tabpane {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.assets-list {
+  padding: 12px;
+  height: 100%;
+}
+
+/* 时间轴区域 */
+.timeline-section {
+  height: 140px;
+  background: #1f1f1f;
+  border-top: 1px solid #3a3a3a;
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-ruler {
+  padding: 8px 16px 0;
+  background: #2a2a2a;
+}
+
+.timeline-ruler .ant-slider {
+  margin: 0;
+}
+
+.timeline-ruler .ant-slider-track {
+  background: #1890ff;
+}
+
+.timeline-ruler .ant-slider-handle {
+  border-color: #1890ff;
+}
+
+/* 轨道 */
+.timeline-track {
+  display: flex;
+  align-items: center;
+  padding: 4px 0;
+  border-bottom: 1px solid #333;
+  height: 50px;
+}
+
+.track-label {
+  width: 80px;
+  padding: 0 12px;
+  color: #999;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.track-content {
+  flex: 1;
+  height: 40px;
+  background: #151515;
+  border-radius: 4px;
+  margin-right: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.empty-track {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #555;
+  font-size: 12px;
+  border: 2px dashed #333;
+  border-radius: 4px;
+}
+
+/* 视频片段 */
+.clip-item {
+  position: absolute;
+  top: 4px;
+  height: 32px;
+  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 11px;
+  color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  transition: all 0.2s;
+}
+
+.clip-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+}
+
+.clip-item.selected {
+  box-shadow: 0 0 0 2px #ffd700;
+}
+
+.clip-drag {
+  cursor: grab;
+  opacity: 0.7;
+}
+
+.clip-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.clip-duration {
+  font-size: 10px;
+  opacity: 0.8;
+  background: rgba(0,0,0,0.3);
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+
+.clip-delete {
+  opacity: 0;
+  transition: opacity 0.2s;
+  padding: 0 2px !important;
+  color: #fff !important;
+}
+
+.clip-item:hover .clip-delete {
+  opacity: 1;
+}
+
+/* 音频片段 */
+.audio-item {
+  position: absolute;
+  top: 8px;
+  height: 24px;
+  background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  gap: 6px;
+  font-size: 11px;
+  color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.audio-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.audio-volume {
+  font-size: 9px;
+  opacity: 0.8;
+  background: rgba(0,0,0,0.3);
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+.audio-delete {
+  opacity: 0;
+  transition: opacity 0.2s;
+  padding: 0 2px !important;
+  color: #fff !important;
+}
+
+.audio-item:hover .audio-delete {
+  opacity: 1;
+}
+
+/* 暗黑主题下的 Ant Design 组件适配 */
+.video-editor .ant-btn {
+  border-color: #444;
+  background: #333;
+  color: #fff;
+}
+
+.video-editor .ant-btn-primary {
+  background: #1890ff;
+  border-color: #1890ff;
+}
+
+.video-editor .ant-select-selector {
+  background: #333 !important;
+  border-color: #444 !important;
+  color: #fff !important;
+}
+
+.video-editor .ant-tabs-tab {
+  color: #999;
+}
+
+.video-editor .ant-tabs-tab-active {
+  color: #1890ff;
+}
+
+.video-editor .ant-list-item {
+  border-bottom-color: #333;
+  color: #ccc;
+}
+
+.video-editor .ant-empty-description {
+  color: #666;
+}
+
+.video-editor .ant-tag {
+  background: #333;
+  border-color: #444;
+  color: #ccc;
+}

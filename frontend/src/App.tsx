@@ -4,12 +4,14 @@ import {
   FileTextOutlined, 
   PictureOutlined, 
   VideoCameraOutlined,
+  ScissorOutlined,
   PlusOutlined,
   SaveOutlined
 } from '@ant-design/icons';
 import { ScriptCreator } from './components/ScriptCreator';
 import { ImageCreator } from './components/ImageCreator';
 import { VideoCreator } from './components/VideoCreator';
+import { VideoEditor } from './components/VideoEditor';
 import { ProjectManager } from './components/ProjectManager';
 import { useCreatorStore } from './store/creatorStore';
 import './App.css';
@@ -18,7 +20,13 @@ const { Header, Content } = Layout;
 
 function App() {
   const [showProjectManager, setShowProjectManager] = useState(false);
-  const { currentProject, scriptMessages, imageTasks, videoTasks } = useCreatorStore();
+  const { 
+    currentProject, 
+    scriptMessages, 
+    imageTasks, 
+    videoTasks,
+    clips 
+  } = useCreatorStore();
 
   const handleSaveProject = () => {
     // 保存项目逻辑
@@ -53,27 +61,27 @@ function App() {
 
       <Content className="creator-content">
         <div className="workspace">
-          {/* 左侧：剧本创作区 (50%) */}
-          <div className="workspace-left">
-            <div className="panel-header">
-              <FileTextOutlined />
-              <span>剧本创作</span>
-              {scriptMessages.length > 0 && (
-                <Tag className="message-count">{scriptMessages.length}</Tag>
-              )}
+          {/* 上部工作区 */}
+          <div className="workspace-top">
+            {/* 左：剧本创作区 (50%) */}
+            <div className="workspace-panel panel-script">
+              <div className="panel-header">
+                <FileTextOutlined />
+                <span>剧本创作</span>
+                {scriptMessages.length > 0 && (
+                  <Tag className="message-count">{scriptMessages.length}</Tag>
+                )}
+              </div>
+              <div className="panel-content">
+                <ScriptCreator />
+              </div>
             </div>
-            <div className="panel-content">
-              <ScriptCreator />
-            </div>
-          </div>
 
-          {/* 右侧：图片+视频创作区 (50%) */}
-          <div className="workspace-right">
-            {/* 右上：图片创作 (50% of right) */}
-            <div className="workspace-right-top">
+            {/* 中：图片创作 (25%) */}
+            <div className="workspace-panel panel-image">
               <div className="panel-header">
                 <PictureOutlined />
-                <span>图片创作</span>
+                <span>分镜图片</span>
                 {imageTasks.length > 0 && (
                   <Tag className="task-count">{imageTasks.length}</Tag>
                 )}
@@ -83,11 +91,11 @@ function App() {
               </div>
             </div>
 
-            {/* 右下：视频创作 (50% of right) */}
-            <div className="workspace-right-bottom">
+            {/* 右：视频生成 (25%) */}
+            <div className="workspace-panel panel-video">
               <div className="panel-header">
                 <VideoCameraOutlined />
-                <span>视频创作</span>
+                <span>视频生成</span>
                 {videoTasks.length > 0 && (
                   <Tag className="task-count">{videoTasks.length}</Tag>
                 )}
@@ -95,6 +103,20 @@ function App() {
               <div className="panel-content">
                 <VideoCreator />
               </div>
+            </div>
+          </div>
+
+          {/* 下部：视频剪辑区 (30%) */}
+          <div className="workspace-bottom">
+            <div className="panel-header editor-header">
+              <ScissorOutlined />
+              <span>视频剪辑与配乐</span>
+              {clips.length > 0 && (
+                <Tag className="clip-count">{clips.length} 片段</Tag>
+              )}
+            </div>
+            <div className="panel-content editor-content">
+              <VideoEditor />
             </div>
           </div>
         </div>

@@ -12,6 +12,7 @@
   align-items: center;
   justify-content: space-between;
   height: 64px;
+  flex-shrink: 0;
 }
 
 .header-left {
@@ -33,19 +34,38 @@
 
 .creator-content {
   flex: 1;
-  padding: 16px;
+  padding: 12px;
   overflow: hidden;
+  background: #f0f2f5;
 }
 
 .workspace {
   display: flex;
+  flex-direction: column;
   height: 100%;
-  gap: 16px;
+  gap: 12px;
 }
 
-/* 左侧：剧本创作区 (50%) */
-.workspace-left {
-  width: 50%;
+/* 上部工作区 (70%) */
+.workspace-top {
+  display: flex;
+  height: 65%;
+  gap: 12px;
+}
+
+/* 下部剪辑区 (30%) */
+.workspace-bottom {
+  display: flex;
+  flex-direction: column;
+  height: 35%;
+  background: #1a1a1a;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 面板通用样式 */
+.workspace-panel {
   display: flex;
   flex-direction: column;
   background: #fff;
@@ -54,27 +74,23 @@
   overflow: hidden;
 }
 
-/* 右侧：图片+视频创作区 (50%) */
-.workspace-right {
+/* 左：剧本 (50%) */
+.panel-script {
   width: 50%;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
 }
 
-.workspace-right-top,
-.workspace-right-bottom {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
+/* 中：图片 (25%) */
+.panel-image {
+  width: 25%;
+}
+
+/* 右：视频 (25%) */
+.panel-video {
+  width: 25%;
 }
 
 .panel-header {
-  padding: 12px 16px;
+  padding: 10px 14px;
   border-bottom: 1px solid #e8e8e8;
   display: flex;
   align-items: center;
@@ -82,6 +98,13 @@
   font-weight: 500;
   color: #333;
   background: #fafafa;
+  flex-shrink: 0;
+}
+
+.panel-content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
 }
 
 .message-count,
@@ -94,21 +117,69 @@
   font-size: 12px;
 }
 
-.panel-content {
-  flex: 1;
-  overflow: hidden;
-  position: relative;
+.clip-count {
+  margin-left: auto;
+  background: #52c41a;
+  color: #fff;
+  border-radius: 10px;
+  padding: 0 8px;
+  font-size: 12px;
+}
+
+/* 剪辑区特殊样式 */
+.editor-header {
+  background: #2a2a2a;
+  border-bottom-color: #3a3a3a;
+  color: #fff;
+}
+
+.editor-content {
+  background: #1a1a1a;
 }
 
 /* 响应式调整 */
 @media (max-width: 1200px) {
-  .workspace {
+  .workspace-top {
     flex-direction: column;
+    height: 60%;
   }
-
-  .workspace-left,
-  .workspace-right {
+  
+  .panel-script,
+  .panel-image,
+  .panel-video {
     width: 100%;
-    height: 50%;
+    height: 33.33%;
   }
+  
+  .workspace-bottom {
+    height: 40%;
+  }
+}
+
+/* 滚动条样式优化 */
+.panel-content::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.panel-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.panel-content::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.panel-content::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* 暗黑主题下的滚动条 */
+.editor-content::-webkit-scrollbar-thumb {
+  background: #555;
+}
+
+.editor-content::-webkit-scrollbar-thumb:hover {
+  background: #777;
 }
