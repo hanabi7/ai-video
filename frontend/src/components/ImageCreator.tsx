@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Input, Button, Tag, Card, Image, message, Upload, Space } from 'antd';
 import { 
   PictureOutlined, 
@@ -11,6 +11,7 @@ import {
 } from '@ant-design/icons';
 import { useCreatorStore, ImageTask } from '../store/creatorStore';
 import { v4 as uuidv4 } from 'uuid';
+import { generateImage, pollTaskStatus } from '../utils/api';
 import './ImageCreator.css';
 
 const { TextArea } = Input;
@@ -37,8 +38,32 @@ export const ImageCreator: React.FC = () => {
   const [selectedStyle, setSelectedStyle] = useState('cinematic');
   const [selectedRatio, setSelectedRatio] = useState('16:9');
   const [referenceImage, setReferenceImage] = useState<string | null>(null);
+  const [generating, setGenerating] = useState(false);
   
-  const { imageTasks, isImageLoading, addImageTask, updateImageTask } = useCreatorStore();
+  const { imageTasks, addImageTask, updateImageTask, removeImageTask } = useCreatorStore();
+
+  // 轮询正在生成的任务状态
+  useEffect(() => {
+    const generatingTasks = imageTasks.filter(t => t.status === 'generating');
+    
+    generatingTasks.forEach(task => {
+      pollTaskStatus(task.id, 'image', (status) => {
+        updateImageTask(task.id, {
+          status: status.status,
+          resultUrl: status.result_url,
+        });
+        
+        if (status.status === 'completed') {
+          message.success('图片生成完成！');
+        } else if (status.status === 'failed') {
+          message.error('图片生成失败');
+        }
+      }).catch(err => {
+        console.error('Poll error:', err);
+        updateImageTask(task.id, { status: 'failed' });
+      });
+    });
+  }, [imageTasks]);
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -46,45 +71,71 @@ export const ImageCreator: React.FC = () => {
       return;
     }
 
-    const task: ImageTask = {
-      id: uuidv4(),
-      prompt: prompt,
-      status: 'generating',
-      createdAt: Date.now()
-    };
+    setGenerating(true);
 
-    addImageTask(task);
-    setPrompt('');
-
-    // 模拟生成过程
     try {
-      // 这里应该调用后端API
-      // const result = await generateImage({
-      //   prompt: buildFullPrompt(),
-      //   ratio: selectedRatio,
-      //   reference: referenceImage
-      // });
+      // 构建完整提示词
+      const stylePrompt = stylePresets.find(s => s.key === selectedStyle)?.prompt || '';
+      const fullPrompt = `${prompt}, ${stylePrompt}`;
 
-      // 模拟延迟
-      await new Promise(resolve => setTimeout(resolve, 3000));
-
-      // 模拟结果
-      updateImageTask(task.id, {
-        status: 'completed',
-        resultUrl: `https://picsum.photos/seed/${task.id}/800/450`
+      // 调用后端API
+      const result = await generateImage({
+        prompt: fullPrompt,
+        ratio: selectedRatio as any,
+        style: selectedStyle as any,
+        reference_image: referenceImage || undefined,
       });
 
-      message.success('图片生成成功');
+      // 添加到任务列表
+      const task: ImageTask = {
+        id: result.id,
+        prompt: prompt,
+        status: 'generating',
+        createdAt: Date.now()
+      };
+
+      addImageTask(task);
+      setPrompt('');
+      message.success('图片生成任务已创建');
 
     } catch (error) {
-      updateImageTask(task.id, { status: 'failed' });
-      message.error('生成失败');
+      message.error(error instanceof Error ? error.message : '生成失败');
+    } finally {
+      setGenerating(false);
     }
   };
 
   const handleDelete = (id: string) => {
-    const newTasks = imageTasks.filter(t => t.id !== id);
-    useCreatorStore.setState({ imageTasks: newTasks });
+    removeImageTask(id);
+  };
+
+  const handleDownload = (url: string) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `image_${Date.now()}.png`;
+    link.target = '_blank';
+    link.click();
+    message.success('开始下载');
+  };
+
+  const handleRetry = async (task: ImageTask) => {
+    updateImageTask(task.id, { status: 'generating' });
+    
+    try {
+      const status = await pollTaskStatus(task.id, 'image', (s) => {
+        updateImageTask(task.id, {
+          status: s.status,
+          resultUrl: s.result_url,
+        });
+      });
+      
+      if (status.status === 'completed') {
+        message.success('图片生成完成！');
+      }
+    } catch (error) {
+      message.error('生成失败');
+      updateImageTask(task.id, { status: 'failed' });
+    }
   };
 
   return (
@@ -133,7 +184,6 @@ export const ImageCreator: React.FC = () => {
             accept="image/*"
             showUploadList={false}
             beforeUpload={(file) => {
-              // 处理参考图上传
               const reader = new FileReader();
               reader.onload = (e) => {
                 setReferenceImage(e.target?.result as string);
@@ -164,9 +214,9 @@ export const ImageCreator: React.FC = () => {
 
         <Button
           type="primary"
-          icon={isImageLoading ? <LoadingOutlined /> : <SendOutlined />}
+          icon={generating ? <LoadingOutlined /> : <SendOutlined />}
           onClick={handleGenerate}
-          loading={isImageLoading}
+          loading={generating}
           block
           className="generate-btn"
         >
@@ -216,11 +266,13 @@ export const ImageCreator: React.FC = () => {
               actions={[
                 <DownloadOutlined 
                   key="download"
-                  onClick={() => message.success('开始下载')}
+                  onClick={() => task.resultUrl && handleDownload(task.resultUrl)}
+                  style={{ visibility: task.resultUrl ? 'visible' : 'hidden' }}
                 />,
                 <ReloadOutlined 
                   key="retry"
-                  onClick={() => message.success('重新生成')}
+                  onClick={() => handleRetry(task)}
+                  style={{ visibility: task.status === 'failed' ? 'visible' : 'hidden' }}
                 />,
                 <DeleteOutlined 
                   key="delete"

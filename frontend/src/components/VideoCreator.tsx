@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Input, Button, Space, Card, Tag, Progress, Slider, message, Select, Upload } from 'antd';
+import { useState, useEffect } from 'react';
+import { Input, Button, Space, Card, Tag, Slider, message, Select, Upload } from 'antd';
 import { 
   VideoCameraOutlined, 
   SendOutlined,
@@ -11,6 +11,7 @@ import {
 } from '@ant-design/icons';
 import { useCreatorStore, VideoTask } from '../store/creatorStore';
 import { v4 as uuidv4 } from 'uuid';
+import { generateVideo, pollTaskStatus } from '../utils/api';
 import './VideoCreator.css';
 
 const { TextArea } = Input;
@@ -27,23 +28,47 @@ const videoStyles = [
 
 // 视频生成平台
 const platforms = [
+  { key: 'dreamina', label: '即梦 Dreamina', maxDuration: 10 },
   { key: 'luma', label: 'Luma Dream Machine', maxDuration: 5 },
   { key: 'keling', label: '快手可灵', maxDuration: 10 },
   { key: 'runway', label: 'Runway Gen-3', maxDuration: 10 },
-  { key: 'pika', label: 'Pika Labs', maxDuration: 3 },
 ];
 
 export const VideoCreator: React.FC = () => {
   const [prompt, setPrompt] = useState('');
   const [selectedStyle, setSelectedStyle] = useState('cinematic');
-  const [selectedPlatform, setSelectedPlatform] = useState('luma');
+  const [selectedPlatform, setSelectedPlatform] = useState('dreamina');
   const [duration, setDuration] = useState(5);
   const [aspectRatio, setAspectRatio] = useState('16:9');
   const [referenceImage, setReferenceImage] = useState<string | null>(null);
+  const [generating, setGenerating] = useState(false);
   
-  const { videoTasks, isVideoLoading, addVideoTask, updateVideoTask } = useCreatorStore();
+  const { videoTasks, addVideoTask, updateVideoTask, removeVideoTask } = useCreatorStore();
 
   const currentPlatform = platforms.find(p => p.key === selectedPlatform);
+
+  // 轮询正在生成的任务状态
+  useEffect(() => {
+    const generatingTasks = videoTasks.filter(t => t.status === 'generating');
+    
+    generatingTasks.forEach(task => {
+      pollTaskStatus(task.id, 'video', (status) => {
+        updateVideoTask(task.id, {
+          status: status.status,
+          resultUrl: status.result_url,
+        });
+        
+        if (status.status === 'completed') {
+          message.success('视频生成完成！');
+        } else if (status.status === 'failed') {
+          message.error('视频生成失败');
+        }
+      }).catch(err => {
+        console.error('Poll error:', err);
+        updateVideoTask(task.id, { status: 'failed' });
+      });
+    });
+  }, [videoTasks]);
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -51,39 +76,70 @@ export const VideoCreator: React.FC = () => {
       return;
     }
 
-    const task: VideoTask = {
-      id: uuidv4(),
-      prompt: prompt,
-      status: 'generating',
-      duration: duration,
-      createdAt: Date.now()
-    };
+    setGenerating(true);
 
-    addVideoTask(task);
-    setPrompt('');
-
-    // 模拟生成过程
     try {
-      // 视频生成时间较长
-      await new Promise(resolve => setTimeout(resolve, 8000));
-
-      // 模拟结果
-      updateVideoTask(task.id, {
-        status: 'completed',
-        resultUrl: `https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4`
+      // 调用后端API
+      const result = await generateVideo({
+        prompt,
+        image_url: referenceImage || undefined,
+        duration,
+        aspect_ratio: aspectRatio as any,
+        style: selectedStyle as any,
+        platform: selectedPlatform as any,
       });
 
-      message.success('视频生成成功');
+      // 添加到任务列表
+      const task: VideoTask = {
+        id: result.id,
+        prompt: prompt,
+        status: 'generating',
+        duration: duration,
+        createdAt: Date.now()
+      };
+
+      addVideoTask(task);
+      setPrompt('');
+      message.success('视频生成任务已创建');
 
     } catch (error) {
-      updateVideoTask(task.id, { status: 'failed' });
-      message.error('生成失败');
+      message.error(error instanceof Error ? error.message : '生成失败');
+    } finally {
+      setGenerating(false);
     }
   };
 
   const handleDelete = (id: string) => {
-    const newTasks = videoTasks.filter(t => t.id !== id);
-    useCreatorStore.setState({ videoTasks: newTasks });
+    removeVideoTask(id);
+  };
+
+  const handleDownload = (url: string) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `video_${Date.now()}.mp4`;
+    link.target = '_blank';
+    link.click();
+    message.success('开始下载');
+  };
+
+  const handleRetry = async (task: VideoTask) => {
+    updateVideoTask(task.id, { status: 'generating' });
+    
+    try {
+      const status = await pollTaskStatus(task.id, 'video', (s) => {
+        updateVideoTask(task.id, {
+          status: s.status,
+          resultUrl: s.result_url,
+        });
+      });
+      
+      if (status.status === 'completed') {
+        message.success('视频生成完成！');
+      }
+    } catch (error) {
+      message.error('生成失败');
+      updateVideoTask(task.id, { status: 'failed' });
+    }
   };
 
   return (
@@ -96,7 +152,7 @@ export const VideoCreator: React.FC = () => {
             value={selectedPlatform}
             onChange={setSelectedPlatform}
             size="small"
-            style={{ width: 150 }}
+            style={{ width: 140 }}
           >
             {platforms.map(p => (
               <Option key={p.key} value={p.key}>{p.label}</Option>
@@ -135,7 +191,7 @@ export const VideoCreator: React.FC = () => {
               max={currentPlatform?.maxDuration || 5}
               value={duration}
               onChange={setDuration}
-              style={{ width: 150 }}
+              style={{ width: 100 }}
             />
             <span className="duration-label">{duration}秒</span>
           </div>
@@ -175,9 +231,9 @@ export const VideoCreator: React.FC = () => {
 
         <Button
           type="primary"
-          icon={isVideoLoading ? <LoadingOutlined /> : <SendOutlined />}
+          icon={generating ? <LoadingOutlined /> : <SendOutlined />}
           onClick={handleGenerate}
-          loading={isVideoLoading}
+          loading={generating}
           block
           className="generate-btn"
         >
@@ -219,7 +275,6 @@ export const VideoCreator: React.FC = () => {
                 ) : task.status === 'generating' ? (
                   <div className="generating-placeholder">
                     <LoadingOutlined spin style={{ fontSize: 32 }} />
-                    <Progress percent={50} size="small" />
                     <p>生成中...⏳</p>
                     <p className="hint">视频生成需要 1-3 分钟</p>
                   </div>
@@ -231,7 +286,16 @@ export const VideoCreator: React.FC = () => {
                 )
               }
               actions={[
-                <DownloadOutlined key="download" />,
+                <DownloadOutlined 
+                  key="download"
+                  onClick={() => task.resultUrl && handleDownload(task.resultUrl)}
+                  style={{ visibility: task.resultUrl ? 'visible' : 'hidden' }}
+                />,
+                <ReloadOutlined 
+                  key="retry"
+                  onClick={() => handleRetry(task)}
+                  style={{ visibility: task.status === 'failed' ? 'visible' : 'hidden' }}
+                />,
                 <DeleteOutlined 
                   key="delete" 
                   onClick={() => handleDelete(task.id)}

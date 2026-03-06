@@ -114,8 +114,10 @@ interface CreatorState {
   setScriptLoading: (loading: boolean) => void;
   addImageTask: (task: ImageTask) => void;
   updateImageTask: (id: string, updates: Partial<ImageTask>) => void;
+  removeImageTask: (id: string) => void;
   addVideoTask: (task: VideoTask) => void;
   updateVideoTask: (id: string, updates: Partial<VideoTask>) => void;
+  removeVideoTask: (id: string) => void;
   
   // 剪辑相关
   addClip: (clip: Clip) => void;
@@ -164,6 +166,10 @@ export const useCreatorStore = create<CreatorState>((set) => ({
       task.id === id ? { ...task, ...updates } : task
     )
   })),
+
+  removeImageTask: (id) => set((state) => ({
+    imageTasks: state.imageTasks.filter(task => task.id !== id)
+  })),
   
   addVideoTask: (task) => set((state) => ({
     videoTasks: [task, ...state.videoTasks]
@@ -173,6 +179,10 @@ export const useCreatorStore = create<CreatorState>((set) => ({
     videoTasks: state.videoTasks.map(task =>
       task.id === id ? { ...task, ...updates } : task
     )
+  })),
+
+  removeVideoTask: (id) => set((state) => ({
+    videoTasks: state.videoTasks.filter(task => task.id !== id)
   })),
 
   // 剪辑操作
