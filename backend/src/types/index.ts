@@ -1,4 +1,6 @@
-// 图片生成请求
+// 统一 AI 服务接口
+// 所有平台（即梦、通义、可灵等）都实现这个接口
+
 export interface ImageGenerationRequest {
   prompt: string;
   negative_prompt?: string;
@@ -6,10 +8,9 @@ export interface ImageGenerationRequest {
   height?: number;
   ratio?: '16:9' | '9:16' | '1:1' | '4:3';
   style?: 'cinematic' | 'anime' | 'realistic' | 'cyberpunk' | 'vintage';
-  reference_image?: string; // base64
+  reference_image?: string;
 }
 
-// 图片生成响应
 export interface ImageGenerationResponse {
   id: string;
   status: 'pending' | 'generating' | 'completed' | 'failed';
@@ -17,17 +18,15 @@ export interface ImageGenerationResponse {
   created_at: number;
 }
 
-// 视频生成请求
 export interface VideoGenerationRequest {
   prompt: string;
-  image_url?: string; // 首帧图片
-  duration?: number; // 秒
+  image_url?: string;
+  duration?: number;
   aspect_ratio?: '16:9' | '9:16' | '1:1';
   style?: 'cinematic' | 'anime' | 'realistic' | 'dreamy' | 'noir';
-  platform?: 'dreamina' | 'luma' | 'keling' | 'runway';
+  platform?: 'dreamina' | 'tongyi' | 'keling' | 'luma' | 'runway';
 }
 
-// 视频生成响应
 export interface VideoGenerationResponse {
   id: string;
   status: 'pending' | 'generating' | 'completed' | 'failed';
@@ -36,7 +35,6 @@ export interface VideoGenerationResponse {
   created_at: number;
 }
 
-// 任务状态查询响应
 export interface TaskStatusResponse {
   id: string;
   type: 'image' | 'video';
@@ -46,10 +44,33 @@ export interface TaskStatusResponse {
   error?: string;
 }
 
+// 统一服务接口
+export interface IImageGenerationService {
+  generateImage(request: ImageGenerationRequest): Promise<ImageGenerationResponse>;
+  getImageStatus(taskId: string): Promise<TaskStatusResponse>;
+}
+
+export interface IVideoGenerationService {
+  generateVideo(request: VideoGenerationRequest): Promise<VideoGenerationResponse>;
+  getVideoStatus(taskId: string): Promise<TaskStatusResponse>;
+}
+
 // API 统一响应格式
 export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
   message?: string;
+}
+
+// 任务存储
+export interface TaskInfo {
+  id: string;
+  type: 'image' | 'video';
+  platform: string;
+  status: string;
+  result_url?: string;
+  created_at: number;
+  updated_at: number;
+  error?: string;
 }

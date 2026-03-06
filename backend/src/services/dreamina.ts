@@ -1,5 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import { 
+  IImageGenerationService,
+  IVideoGenerationService,
   ImageGenerationRequest, 
   ImageGenerationResponse,
   VideoGenerationRequest,
@@ -7,8 +9,8 @@ import {
   TaskStatusResponse 
 } from '../types';
 
-// 即梦 API 服务类
-export class DreaminaService {
+// 即梦 API 服务类 - 实现统一接口
+export class DreaminaService implements IImageGenerationService, IVideoGenerationService {
   private client: AxiosInstance;
   private apiKey: string;
 
@@ -25,11 +27,23 @@ export class DreaminaService {
       timeout: 60000,
     });
 
+    // 添加请求拦截器 - 日志
+    this.client.interceptors.request.use(
+      (config) => {
+        console.log(`[Dreamina] Request: ${config.method?.toUpperCase()} ${config.url}`);
+        return config;
+      },
+      (error) => {
+        console.error('[Dreamina] Request Error:', error);
+        return Promise.reject(error);
+      }
+    );
+
     // 添加响应拦截器处理错误
     this.client.interceptors.response.use(
       (response) => response,
       (error) => {
-        console.error('Dreamina API Error:', error.response?.data || error.message);
+        console.error('[Dreamina] API Error:', error.response?.data || error.message);
         throw error;
       }
     );
@@ -76,7 +90,7 @@ export class DreaminaService {
         payload.image = request.reference_image;
       }
 
-      console.log('Calling Dreamina Image API:', payload);
+      console.log('[Dreamina] Generate Image:', { prompt: request.prompt, style: request.style });
 
       // 调用即梦图片生成API
       const response = await this.client.post('/images/generations', payload);
@@ -87,9 +101,14 @@ export class DreaminaService {
         created_at: Date.now(),
       };
     } catch (error) {
-      console.error('Image generation failed:', error);
+      console.error('[Dreamina] Image generation failed:', error);
       throw new Error('图片生成失败，请检查API配置');
     }
+  }
+
+  // 查询图片状态
+  async getImageStatus(taskId: string): Promise<TaskStatusResponse> {
+    return this.getTaskStatus(taskId, 'image');
   }
 
   // 生成视频
@@ -106,7 +125,7 @@ export class DreaminaService {
         payload.image_url = request.image_url;
       }
 
-      console.log('Calling Dreamina Video API:', payload);
+      console.log('[Dreamina] Generate Video:', { prompt: request.prompt, duration: request.duration });
 
       // 调用即梦视频生成API
       const response = await this.client.post('/videos/generations', payload);
@@ -118,13 +137,18 @@ export class DreaminaService {
         created_at: Date.now(),
       };
     } catch (error) {
-      console.error('Video generation failed:', error);
+      console.error('[Dreamina] Video generation failed:', error);
       throw new Error('视频生成失败，请检查API配置');
     }
   }
 
-  // 查询任务状态
-  async getTaskStatus(taskId: string, type: 'image' | 'video'): Promise<TaskStatusResponse> {
+  // 查询视频状态
+  async getVideoStatus(taskId: string): Promise<TaskStatusResponse> {
+    return this.getTaskStatus(taskId, 'video');
+  }
+
+  // 查询任务状态（私有方法）
+  private async getTaskStatus(taskId: string, type: 'image' | 'video'): Promise<TaskStatusResponse> {
     try {
       const endpoint = type === 'image' 
         ? `/images/status/${taskId}` 
@@ -142,7 +166,7 @@ export class DreaminaService {
         error: data.error_message,
       };
     } catch (error) {
-      console.error('Get task status failed:', error);
+      console.error('[Dreamina] Get task status failed:', error);
       throw new Error('查询任务状态失败');
     }
   }
@@ -163,5 +187,5 @@ export class DreaminaService {
   }
 }
 
-// 导出单例
+// 导出单例（向后兼容）
 export const dreaminaService = new DreaminaService();

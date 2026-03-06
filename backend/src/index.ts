@@ -10,17 +10,20 @@ dotenv.config();
 import imageRoutes from './routes/images';
 import videoRoutes from './routes/videos';
 
+// 导入服务工厂（确保服务被初始化）
+import './services/factory';
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 // 中间件
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000'], // 前端开发服务器地址
+  origin: ['http://localhost:5173', 'http://localhost:3000', '*'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-app.use(express.json({ limit: '50mb' })); // 支持大文件上传（base64图片）
+app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // 请求日志
@@ -33,6 +36,15 @@ app.use((req, res, next) => {
 app.use('/api/images', imageRoutes);
 app.use('/api/videos', videoRoutes);
 
+// 支持的平台列表
+app.get('/api/platforms', (req, res) => {
+  const { unifiedAIService } = require('./services/factory');
+  res.json({
+    success: true,
+    data: unifiedAIService.getSupportedPlatforms()
+  });
+});
+
 // 健康检查
 app.get('/api/health', (req, res) => {
   res.json({
@@ -41,7 +53,19 @@ app.get('/api/health', (req, res) => {
       status: 'ok',
       timestamp: new Date().toISOString(),
       version: '1.0.0',
+      env: {
+        dreamina: process.env.DREAMINA_API_KEY ? 'configured' : 'not configured',
+        tongyi: process.env.TONGYI_API_KEY ? 'configured' : 'not configured',
+      }
     }
+  });
+});
+
+// 404 处理
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    error: '接口不存在'
   });
 });
 
@@ -63,14 +87,15 @@ app.listen(PORT, () => {
 🔍 Health: http://localhost:${PORT}/api/health
 🎨 Images: http://localhost:${PORT}/api/images/generate
 🎬 Videos: http://localhost:${PORT}/api/videos/generate
+📋 Platforms: http://localhost:${PORT}/api/platforms
 =====================================
   `);
   
   // 检查环境变量
-  if (!process.env.DREAMINA_API_KEY) {
-    console.warn('⚠️  Warning: DREAMINA_API_KEY not set. API calls will fail.');
-    console.log('   Copy .env.example to .env and add your API key.\n');
-  }
+  console.log('Environment Check:');
+  console.log(`  DREAMINA_API_KEY: ${process.env.DREAMINA_API_KEY ? '✅ configured' : '⚠️ not set'}`);
+  console.log(`  TONGYI_API_KEY: ${process.env.TONGYI_API_KEY ? '✅ configured' : '⏳ waiting for tomorrow'}`);
+  console.log('');
 });
 
 export default app;

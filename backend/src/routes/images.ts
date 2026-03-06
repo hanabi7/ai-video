@@ -1,16 +1,11 @@
 import { Router } from 'express';
-import { v4 as uuidv4 } from 'uuid';
-import { dreaminaService } from '../services/dreamina';
-import { 
-  ImageGenerationRequest, 
-  VideoGenerationRequest,
-  ApiResponse 
-} from '../types';
+import { unifiedAIService } from '../services/factory';
+import { TaskInfo } from '../types';
 
 const router = Router();
 
 // 内存存储任务状态（生产环境应使用Redis）
-const taskStore = new Map<string, { type: 'image' | 'video'; status: string; result?: string }>();
+const taskStore = new Map<string, TaskInfo>();
 
 /**
  * POST /api/images/generate
@@ -18,35 +13,48 @@ const taskStore = new Map<string, { type: 'image' | 'video'; status: string; res
  */
 router.post('/generate', async (req, res) => {
   try {
-    const request: ImageGenerationRequest = req.body;
+    const { prompt, style, ratio, platform = 'dreamina', ...rest } = req.body;
     
-    if (!request.prompt) {
+    if (!prompt) {
       return res.status(400).json({
         success: false,
         error: '缺少必要参数: prompt'
-      } as ApiResponse);
+      });
     }
 
-    const result = await dreaminaService.generateImage(request);
+    const result = await unifiedAIService.generateImage({
+      prompt,
+      style,
+      ratio,
+      platform,
+      ...rest
+    });
     
     // 存储任务状态
-    taskStore.set(result.id, { type: 'image', status: result.status });
+    taskStore.set(result.id, {
+      id: result.id,
+      type: 'image',
+      platform,
+      status: result.status,
+      created_at: result.created_at,
+      updated_at: Date.now(),
+    });
     
     // 启动轮询检查任务状态
-    pollTaskStatus(result.id, 'image');
+    pollTaskStatus(result.id, 'image', platform);
 
     res.json({
       success: true,
       data: result,
       message: '图片生成任务已创建'
-    } as ApiResponse<typeof result>);
+    });
     
   } catch (error) {
-    console.error('Image generation error:', error);
+    console.error('[Images] Generation error:', error);
     res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : '图片生成失败'
-    } as ApiResponse);
+    });
   }
 });
 
@@ -56,66 +64,95 @@ router.post('/generate', async (req, res) => {
  */
 router.get('/status/:id', async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await dreaminaService.getTaskStatus(id, 'image');
+    const { id } = req.query;
+    const task = taskStore.get(req.params.id);
+    const platform = task?.platform || 'dreamina';
+    
+    const result = await unifiedAIService.getImageStatus(req.params.id, platform);
+    
+    // 更新存储的状态
+    if (task) {
+      task.status = result.status;
+      task.result_url = result.result_url;
+      task.updated_at = Date.now();
+      if (result.error) task.error = result.error;
+    }
     
     res.json({
       success: true,
       data: result
-    } as ApiResponse<typeof result>);
+    });
     
   } catch (error) {
     res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : '查询失败'
-    } as ApiResponse);
+    });
   }
 });
 
 /**
  * GET /api/images/list
- * 获取图片生成历史（从内存）
+ * 获取图片生成历史
  */
 router.get('/list', (req, res) => {
-  const images = Array.from(taskStore.entries())
-    .filter(([_, task]) => task.type === 'image')
-    .map(([id, task]) => ({
-      id,
-      status: task.status,
-      result_url: task.result,
-    }));
+  const images = Array.from(taskStore.values())
+    .filter(task => task.type === 'image')
+    .sort((a, b) => b.created_at - a.created_at);
   
   res.json({
     success: true,
     data: images
-  } as ApiResponse<typeof images>);
+  });
+});
+
+/**
+ * GET /api/images/platforms
+ * 获取支持的图片生成平台
+ */
+router.get('/platforms', (req, res) => {
+  const platforms = unifiedAIService.getSupportedPlatforms().image;
+  res.json({
+    success: true,
+    data: platforms
+  });
 });
 
 // 轮询任务状态
-async function pollTaskStatus(taskId: string, type: 'image' | 'video') {
-  const maxAttempts = 60; // 最多轮询60次（约5分钟）
+async function pollTaskStatus(taskId: string, type: 'image' | 'video', platform: string) {
+  const maxAttempts = type === 'image' ? 60 : 120; // 图片最多60次，视频120次
   let attempts = 0;
   
   const check = async () => {
     if (attempts >= maxAttempts) {
-      taskStore.set(taskId, { type, status: 'failed' });
+      const task = taskStore.get(taskId);
+      if (task) {
+        task.status = 'failed';
+        task.error = '轮询超时';
+        task.updated_at = Date.now();
+      }
       return;
     }
     
     try {
-      const status = await dreaminaService.getTaskStatus(taskId, type);
-      taskStore.set(taskId, { 
-        type, 
-        status: status.status,
-        result: status.result_url 
-      });
+      const status = type === 'image'
+        ? await unifiedAIService.getImageStatus(taskId, platform)
+        : await unifiedAIService.getVideoStatus(taskId, platform);
+      
+      const task = taskStore.get(taskId);
+      if (task) {
+        task.status = status.status;
+        task.result_url = status.result_url;
+        task.updated_at = Date.now();
+        if (status.error) task.error = status.error;
+      }
       
       if (status.status === 'generating' || status.status === 'pending') {
         attempts++;
-        setTimeout(check, 5000); // 每5秒检查一次
+        setTimeout(check, type === 'image' ? 3000 : 5000);
       }
     } catch (error) {
-      console.error('Poll task status error:', error);
+      console.error(`[Poll] Task ${taskId} error:`, error);
       attempts++;
       setTimeout(check, 5000);
     }
