@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  # ai-video 后端
+  ai-video-backend:
+    build:
+      context: ../ai-video/backend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - DREAMINA_API_KEY=${DREAMINA_API_KEY}
+      - TONGYI_API_KEY=${TONGYI_API_KEY}
+    volumes:
+      - ../ai-video/backend:/app
+      - /app/venv
+    command: python app/main.py
+    restart: unless-stopped
+    networks:
+      - ai-network
+
+  # ai-video 前端
+  ai-video-frontend:
+    build:
+      context: ../ai-video/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:3001
+    volumes:
+      - ../ai-video/frontend:/app
+      - /app/node_modules
+    command: npm run dev -- --host 0.0.0.0
+    depends_on:
+      - ai-video-backend
+    restart: unless-stopped
+    networks:
+      - ai-network
+
+  # ai-architecture 后端
+  ai-arch-backend:
+    build:
+      context: ../ai-architecture/backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+    volumes:
+      - ../ai-architecture/backend:/app
+      - /app/venv
+    command: python app/main.py
+    restart: unless-stopped
+    networks:
+      - ai-network
+
+  # ai-architecture 前端
+  ai-arch-frontend:
+    build:
+      context: ../ai-architecture/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000
+    volumes:
+      - ../ai-architecture/frontend:/app
+      - /app/node_modules
+    command: npm run dev -- --host 0.0.0.0
+    depends_on:
+      - ai-arch-backend
+    restart: unless-stopped
+    networks:
+      - ai-network
+
+  # Nginx 反向代理（可选）
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - ai-video-frontend
+      - ai-arch-frontend
+    restart: unless-stopped
+    networks:
+      - ai-network
+    profiles:
+      - prod
+
+networks:
+  ai-network:
+    driver: bridge
