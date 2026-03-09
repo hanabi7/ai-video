@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeaDance 提示词助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --bg-dark: #0f0f23;
+            --bg-card: #1a1a2e;
+            --bg-sidebar: #16162a;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --border: #2e2e4a;
+            --accent: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            width: 320px;
+            min-width: 200px;
+            max-width: 500px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-header h1::before {
+            content: '🎬';
+            font-size: 24px;
+        }
+
+        .search-box {
+            margin-top: 15px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+        }
+
+        .search-box::before {
+            content: '🔍';
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .category-tabs {
+            display: flex;
+            padding: 10px 15px;
+            gap: 8px;
+            overflow-x: auto;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .category-tab {
+            padding: 6px 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .category-tab:hover {
+            border-color: var(--primary);
+            color: var(--text-primary);
+        }
+
+        .category-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .prompt-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .prompt-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .prompt-item:hover {
+            border-color: var(--primary);
+            transform: translateX(3px);
+        }
+
+        .prompt-item.copied {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .prompt-item .tag {
+            display: inline-block;
+            font-size: 10px;
+            padding: 2px 8px;
+            background: var(--primary-dark);
+            border-radius: 4px;
+            margin-bottom: 6px;
+            color: white;
+        }
+
+        .prompt-item .content {
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-primary);
+        }
+
+        .prompt-item .copy-hint {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .prompt-item:hover .copy-hint {
+            opacity: 1;
+        }
+
+        /* 拖拽条 */
+        .resizer {
+            width: 4px;
+            cursor: col-resize;
+            background: transparent;
+            position: absolute;
+            right: -2px;
+            top: 0;
+            bottom: 0;
+            z-index: 10;
+            transition: background 0.2s;
+        }
+
+        .resizer:hover,
+        .resizer.resizing {
+            background: var(--primary);
+        }
+
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .toolbar {
+            padding: 15px 25px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toolbar-title {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .toolbar-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+        }
+
+        .workspace {
+            flex: 1;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+            overflow: hidden;
+        }
+
+        .prompt-builder {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 15px 20px;
+            background: rgba(99, 102, 241, 0.1);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-body {
+            padding: 20px;
+        }
+
+        .prompt-textarea {
+            width: 100%;
+            min-height: 120px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.6;
+            resize: vertical;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .prompt-textarea:focus {
+            border-color: var(--primary);
+        }
+
+        .quick-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .quick-tag {
+            padding: 6px 12px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-tag:hover {
+            border-color: var(--accent);
+            color: var(--text-primary);
+        }
+
+        .preview-panel {
+            width: 350px;
+            min-width: 300px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 500;
+        }
+
+        .preview-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .preview-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .preview-item:last-child {
+            border-bottom: none;
+        }
+
+        .preview-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .preview-value {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            padding: 15px 20px;
+            background: rgba(99, 102, 241, 0.05);
+            border-top: 1px solid var(--border);
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .stat-value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* Toast 提示 */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--success);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* 分类图标 */
+        .icon-character::before { content: '👤'; }
+        .icon-camera::before { content: '🎥'; }
+        .icon-style::before { content: '🎨'; }
+        .icon-scene::before { content: '🏞️'; }
+        .icon-audio::before { content: '🔊'; }
+        .icon-action::before { content: '⚡'; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1>SeaDance 提示词库</h1>
+                <div class="search-box">
+                    <input type="text" placeholder="搜索提示词..." id="searchInput">
+                </div>
+            </div>
+
+            <div class="category-tabs">
+                <div class="category-tab active" data-category="all">全部</div>
+                <div class="category-tab" data-category="character">人物</div>
+                <div class="category-tab" data-category="camera">镜头</div>
+                <div class="category-tab" data-category="style">风格</div>
+                <div class="category-tab" data-category="scene">场景</div>
+                <div class="category-tab" data-category="audio">声音</div>
+            </div>
+
+            <div class="prompt-list" id="promptList">
+                <!-- 提示词列表将通过 JS 动态生成 -->
+            </div>
+
+            <div class="resizer" id="resizer"></div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <div class="toolbar">
+                <div class="toolbar-title">提示词构建器</div>
+                <div class="toolbar-actions">
+                    <button class="btn btn-secondary" onclick="clearPrompt()">
+                        <span>🗑️</span> 清空
+                    </button>
+                    <button class="btn btn-primary" onclick="copyFinalPrompt()">
+                        <span>📋</span> 复制完整提示词
+                    </button>
+                </div>
+            </div>
+
+            <div class="workspace">
+                <div class="prompt-builder">
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <span class="icon-character"></span>
+                                主体描述
+                            </div>
+                        </div>
+                        <div class="section-body">
+                            <textarea class="prompt-textarea" id="subjectInput" placeholder="描述人物外貌、服装、特征...&#10;示例：一位年轻亚洲女性，黑色长发，穿着米色风衣"></textarea>
+                            <div class="quick-tags" id="subjectTags"></div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <span class="icon-action"></span>
+                                动作与运动
+                            </div>
+                        </div>
+                        <div class="section-body">
+                            <textarea class="prompt-textarea" id="motionInput" placeholder="描述动作、运动方式...&#10;示例：缓慢走向镜头，轻轻撩动头发，露出温柔微笑"></textarea>
+                            <div class="quick-tags" id="motionTags"></div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <span class="icon-scene"></span>
+                                场景与环境
+                            </div>
+                        </div>
+                        <div class="section-body">
+                            <textarea class="prompt-textarea" id="sceneInput" placeholder="描述场景、环境、时间...&#10;示例：秋日黄昏的街道，金黄色落叶飘落，温暖的夕阳"></textarea>
+                            <div class="quick-tags" id="sceneTags"></div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <span class="icon-camera"></span>
+                                镜头与风格
+                            </div>
+                        </div>
+                        <div class="section-body">
+                            <textarea class="prompt-textarea" id="cameraInput" placeholder="描述镜头运动、拍摄风格...&#10;示例：缓慢推镜从全景到特写，电影感浅景深，暖色调调色"></textarea>
+                            <div class="quick-tags" id="cameraTags"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="preview-panel">
+                    <div class="preview-header">实时预览</div>
+                    <div class="preview-content" id="previewContent">
+                        <div class="preview-item">
+                            <div class="preview-label">完整提示词</div>
+                            <div class="preview-value" id="finalPrompt" style="color: var(--text-secondary);">
+                                在左侧输入内容，或点击侧边栏提示词快速添加...
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stats-bar">
+                        <div class="stat">
+                            <span>字数:</span>
+                            <span class="stat-value" id="charCount">0</span>
+                        </div>
+                        <div class="stat">
+                            <span>预计时长:</span>
+                            <span class="stat-value" id="duration">5-10s</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast" id="toast">已复制到剪贴板！</div>
+
+    <script>
+        // 提示词数据
+        const promptData = {
+            character: [
+                { tag: '发型', content: '黑色短发，发尾微卷' },
+                { tag: '发型', content: '金色长发，自然垂落' },
+                { tag: '发型', content: '高马尾，干净利落' },
+                { tag: '面部', content: '高颧骨，眉上挑，睫毛浓密' },
+                { tag: '面部', content: '丹凤眼，眼角微挑，眼神锐利' },
+                { tag: '五官', content: '高鼻梁，薄唇，轮廓分明' },
+                { tag: '肤色', content: '小麦色皮肤，阳光质感' },
+                { tag: '服装', content: '深蓝色修身西装，白色衬衫' },
+                { tag: '服装', content: 'oversize白色卫衣，破洞牛仔裤' },
+                { tag: '服装', content: '墨绿色丝绒旗袍，珍珠耳环' },
+                { tag: '服装', content: '银色反光材质紧身衣，LED纹路' },
+                { tag: '情绪', content: '温柔微笑，眼神柔和' },
+                { tag: '情绪', content: '疯狂咆哮，极度愤怒' },
+                { tag: '情绪', content: '陷入沉思，眉头微皱' },
+                { tag: '情绪', content: '欣喜若狂，笑容灿烂' }
+            ],
+            camera: [
+                { tag: '景别', content: '脸部特写，展现细微表情' },
+                { tag: '景别', content: '中景，腰部以上' },
+                { tag: '景别', content: '全景，人物全身与环境' },
+                { tag: '运镜', content: '缓慢推镜，聚焦主体' },
+                { tag: '运镜', content: '环绕拍摄，360度展示' },
+                { tag: '运镜', content: '跟随拍摄，保持主体在画面' },
+                { tag: '运镜', content: '手持镜头，轻微抖动呼吸感' },
+                { tag: '运镜', content: '航拍视角，展示大环境' },
+                { tag: '切镜', content: '镜头切换，特写转中景' },
+                { tag: '镜头', content: '浅景深，背景虚化光斑' },
+                { tag: '镜头', content: '固定镜头，三脚架拍摄' }
+            ],
+            style: [
+                { tag: '电影', content: '好莱坞大片质感，高对比度' },
+                { tag: '电影', content: '诺兰风格，IMAX质感' },
+                { tag: '电影', content: '王家卫风格，慢门抽帧，霓虹灯' },
+                { tag: '电影', content: '韦斯·安德森风格，对称构图' },
+                { tag: '风格', content: '赛博朋克，紫色霓虹，雨夜' },
+                { tag: '风格', content: '35mm胶片质感，轻微颗粒' },
+                { tag: '艺术', content: '国漫风格，细腻线条' },
+                { tag: '艺术', content: '中国水墨画，留白意境' },
+                { tag: '艺术', content: '水彩画风格，柔和边缘' },
+                { tag: '光影', content: '黄昏逆光，金色轮廓光' },
+                { tag: '光影', content: '霓虹灯光，冷色调蓝光' },
+                { tag: '调色', content: '暖色调，橙黄基调' },
+                { tag: '调色', content: '低饱和度，莫兰迪色系' }
+            ],
+            scene: [
+                { tag: '室内', content: '温馨客厅，阳光透过窗帘' },
+                { tag: '室内', content: '现代办公室，落地窗外城市' },
+                { tag: '室内', content: '咖啡厅，复古装饰，暖色灯光' },
+                { tag: '室外', content: '茂密森林，阳光穿透树叶' },
+                { tag: '室外', content: '繁华都市夜景，霓虹闪烁' },
+                { tag: '室外', content: '海滩日落，金色阳光' },
+                { tag: '时间', content: '清晨，柔和晨光' },
+                { tag: '时间', content: '黄昏，蓝调时刻' },
+                { tag: '天气', content: '雨后，地面反光' },
+                { tag: '天气', content: '晴天，阳光明媚' }
+            ],
+            audio: [
+                { tag: '对白', content: '年轻女性说："我等你很久了"，温柔' },
+                { tag: '对白', content: '中年男性说："我们走吧"，低沉' },
+                { tag: '音效', content: '环境音：远处的咖啡机声' },
+                { tag: '音效', content: '动作音：脚步声，轻微的杯碟碰撞' },
+                { tag: '音乐', content: '背景音乐：爵士钢琴，慵懒慢节奏' },
+                { tag: '音乐', content: '背景音乐：钢琴独奏，忧伤' },
+                { tag: '音乐', content: '背景音乐：电子音乐，未来感' }
+            ]
+        };
+
+        // 快捷标签数据
+        const quickTags = {
+            subjectTags: ['亚洲女性', '欧美男性', '白发老人', '儿童', '西装', '休闲装', '旗袍', '未来感服装'],
+            motionTags: ['缓慢行走', '快速奔跑', '转身', '微笑', '挥手', '坐下', '站立', '跳跃'],
+            sceneTags: ['城市街道', '森林', '海边', '咖啡厅', '办公室', '居家', '雨天', '黄昏'],
+            cameraTags: ['特写', '中景', '全景', '推镜', '环绕', '跟拍', '手持', '浅景深']
+        };
+
+        // 当前分类
+        let currentCategory = 'all';
+
+        // 初始化
+        function init() {
+            renderPromptList();
+            renderQuickTags();
+            initResizer();
+            initSearch();
+            initCategoryTabs();
+            initAutoUpdate();
+        }
+
+        // 渲染提示词列表
+        function renderPromptList() {
+            const list = document.getElementById('promptList');
+            list.innerHTML = '';
+
+            let prompts = [];
+            if (currentCategory === 'all') {
+                Object.values(promptData).forEach(arr => prompts.push(...arr));
+            } else {
+                prompts = promptData[currentCategory] || [];
+            }
+
+            prompts.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'prompt-item';
+                div.innerHTML = `
+                    <div class="tag">${item.tag}</div>
+                    <div class="content">${item.content}</div>
+                    <div class="copy-hint">📋</div>
+                `;
+                div.onclick = () => copyToPrompt(item.content, item.tag);
+                list.appendChild(div);
+            });
+        }
+
+        // 渲染快捷标签
+        function renderQuickTags() {
+            Object.entries(quickTags).forEach(([id, tags]) => {
+                const container = document.getElementById(id);
+                if (!container) return;
+                container.innerHTML = tags.map(tag => 
+                    `<span class="quick-tag" onclick="addTagToInput('${id.replace('Tags', 'Input')}', '${tag}')">+ ${tag}</span>`
+                ).join('');
+            });
+        }
+
+        // 复制到输入框
+        function copyToPrompt(content, tag) {
+            const categoryMap = {
+                '发型': 'subjectInput', '面部': 'subjectInput', '五官': 'subjectInput', '肤色': 'subjectInput', '服装': 'subjectInput', '情绪': 'subjectInput',
+                '景别': 'cameraInput', '运镜': 'cameraInput', '切镜': 'cameraInput', '镜头': 'cameraInput',
+                '电影': 'cameraInput', '风格': 'cameraInput', '艺术': 'cameraInput', '光影': 'cameraInput', '调色': 'cameraInput',
+                '室内': 'sceneInput', '室外': 'sceneInput', '时间': 'sceneInput', '天气': 'sceneInput',
+                '对白': 'cameraInput', '音效': 'cameraInput', '音乐': 'cameraInput'
+            };
+
+            const inputId = categoryMap[tag] || 'cameraInput';
+            const input = document.getElementById(inputId);
+            
+            if (input.value) {
+                input.value += '，' + content;
+            } else {
+                input.value = content;
+            }
+
+            // 显示复制成功动画
+            event.currentTarget.classList.add('copied');
+            setTimeout(() => event.currentTarget.classList.remove('copied'), 1000);
+
+            updatePreview();
+            showToast('已添加到提示词');
+        }
+
+        // 添加标签到输入框
+        function addTagToInput(inputId, tag) {
+            const input = document.getElementById(inputId);
+            if (input.value) {
+                input.value += '，' + tag;
+            } else {
+                input.value = tag;
+            }
+            updatePreview();
+        }
+
+        // 侧边栏拖拽
+        function initResizer() {
+            const resizer = document.getElementById('resizer');
+            const sidebar = document.getElementById('sidebar');
+            let isResizing = false;
+
+            resizer.addEventListener('mousedown', (e) => {
+                isResizing = true;
+                resizer.classList.add('resizing');
+                document.body.style.cursor = 'col-resize';
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isResizing) return;
+                const newWidth = e.clientX;
+                if (newWidth >= 200 && newWidth <= 500) {
+                    sidebar.style.width = newWidth + 'px';
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                isResizing = false;
+                resizer.classList.remove('resizing');
+                document.body.style.cursor = '';
+            });
+        }
+
+        // 搜索功能
+        function initSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const items = document.querySelectorAll('.prompt-item');
+                
+                items.forEach(item => {
+                    const content = item.querySelector('.content').textContent.toLowerCase();
+                    const tag = item.querySelector('.tag').textContent.toLowerCase();
+                    item.style.display = (content.includes(query) || tag.includes(query)) ? 'block' : 'none';
+                });
+            });
+        }
+
+        // 分类切换
+        function initCategoryTabs() {
+            const tabs = document.querySelectorAll('.category-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentCategory = tab.dataset.category;
+                    renderPromptList();
+                });
+            });
+        }
+
+        // 自动更新预览
+        function initAutoUpdate() {
+            const inputs = ['subjectInput', 'motionInput', 'sceneInput', 'cameraInput'];
+            inputs.forEach(id => {
+                document.getElementById(id).addEventListener('input', updatePreview);
+            });
+        }
+
+        // 更新预览
+        function updatePreview() {
+            const subject = document.getElementById('subjectInput').value;
+            const motion = document.getElementById('motionInput').value;
+            const scene = document.getElementById('sceneInput').value;
+            const camera = document.getElementById('cameraInput').value;
+
+            const parts = [subject, motion, scene, camera].filter(Boolean);
+            const finalPrompt = parts.join('，');
+
+            document.getElementById('finalPrompt').textContent = finalPrompt || '在左侧输入内容，或点击侧边栏提示词快速添加...';
+            document.getElementById('finalPrompt').style.color = finalPrompt ? 'var(--text-primary)' : 'var(--text-secondary)';
+            
+            // 更新字数统计
+            document.getElementById('charCount').textContent = finalPrompt.length;
+            
+            // 预估时长
+            let duration = '5-10s';
+            if (finalPrompt.length > 100) duration = '10-15s';
+            if (finalPrompt.length > 200) duration = '15-20s';
+            document.getElementById('duration').textContent = duration;
+        }
+
+        // 清空
+        function clearPrompt() {
+            ['subjectInput', 'motionInput', 'sceneInput', 'cameraInput'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            updatePreview();
+            showToast('已清空所有内容');
+        }
+
+        // 复制完整提示词
+        function copyFinalPrompt() {
+            const prompt = document.getElementById('finalPrompt').textContent;
+            if (!prompt || prompt.includes('在左侧输入')) {
+                showToast('请先输入提示词内容');
+                return;
+            }
+            
+            navigator.clipboard.writeText(prompt).then(() => {
+                showToast('完整提示词已复制！');
+            });
+        }
+
+        // Toast 提示
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // 启动
+        init();
+    </script>
+</body>
+</html>
