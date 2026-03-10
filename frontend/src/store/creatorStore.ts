@@ -17,6 +17,22 @@ export interface ImageTask {
   status: 'pending' | 'generating' | 'completed' | 'failed';
   resultUrl?: string;
   createdAt: number;
+  category?: ImageCategory; // 图片分类
+}
+
+// 图片分类
+export type ImageCategory = 'character' | 'scene' | 'storyboard' | 'other';
+
+// 保存的图片
+export interface SavedImage {
+  id: string;
+  url: string;
+  prompt: string;
+  category: ImageCategory;
+  createdAt: number;
+  tags?: string[];
+  relatedCharacterId?: string; // 关联的角色ID
+  relatedSceneId?: string;     // 关联的场景ID
 }
 
 // 视频创作任务
@@ -176,6 +192,9 @@ interface CreatorState {
   imageTasks: ImageTask[];
   isImageLoading: boolean;
   
+  // 保存的图片库
+  savedImages: SavedImage[];
+  
   // 视频创作
   videoTasks: VideoTask[];
   isVideoLoading: boolean;
@@ -233,6 +252,12 @@ interface CreatorState {
   addImageTask: (task: ImageTask) => void;
   updateImageTask: (id: string, updates: Partial<ImageTask>) => void;
   removeImageTask: (id: string) => void;
+  
+  // 保存图片库
+  addSavedImage: (image: SavedImage) => void;
+  removeSavedImage: (id: string) => void;
+  updateSavedImage: (id: string, updates: Partial<SavedImage>) => void;
+  getSavedImagesByCategory: (category: ImageCategory) => SavedImage[];
   
   // 视频创作
   addVideoTask: (task: VideoTask) => void;
@@ -298,6 +323,10 @@ export const useCreatorStore = create<CreatorState>()(
       isScriptLoading: false,
       imageTasks: [],
       isImageLoading: false,
+      
+      // 保存的图片库
+      savedImages: [],
+      
       videoTasks: [],
       isVideoLoading: false,
       
@@ -414,6 +443,26 @@ export const useCreatorStore = create<CreatorState>()(
       removeImageTask: (id) => set((state) => ({
         imageTasks: state.imageTasks.filter(task => task.id !== id)
       })),
+      
+      // 保存图片库
+      addSavedImage: (image) => set((state) => ({
+        savedImages: [image, ...state.savedImages]
+      })),
+      
+      removeSavedImage: (id) => set((state) => ({
+        savedImages: state.savedImages.filter(img => img.id !== id)
+      })),
+      
+      updateSavedImage: (id, updates) => set((state) => ({
+        savedImages: state.savedImages.map(img =>
+          img.id === id ? { ...img, ...updates } : img
+        )
+      })),
+      
+      getSavedImagesByCategory: (category) => {
+        const { savedImages } = get();
+        return savedImages.filter(img => img.category === category);
+      },
       
       addVideoTask: (task) => set((state) => ({
         videoTasks: [task, ...state.videoTasks]
@@ -595,6 +644,7 @@ export const useCreatorStore = create<CreatorState>()(
         clips: state.clips,
         audioTracks: state.audioTracks,
         exportTasks: state.exportTasks,
+        savedImages: state.savedImages,
       }),
     }
   )
