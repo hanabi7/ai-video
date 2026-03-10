@@ -261,6 +261,15 @@
   opacity: 1;
 }
 
+/* 选中片段样式 */
+.selected-clip-item {
+  background: rgba(24, 144, 255, 0.1);
+}
+
+.selected-clip-item .ant-list-item-action {
+  opacity: 1;
+}
+
 /* 暗黑主题下的 Ant Design 组件适配 */
 .video-editor .ant-btn {
   border-color: #444;
@@ -271,6 +280,12 @@
 .video-editor .ant-btn-primary {
   background: #1890ff;
   border-color: #1890ff;
+}
+
+.video-editor .ant-btn-primary:disabled {
+  background: #1f1f1f;
+  border-color: #333;
+  color: #666;
 }
 
 .video-editor .ant-select-selector {
@@ -300,4 +315,31 @@
   background: #333;
   border-color: #444;
   color: #ccc;
+}
+
+.video-editor .ant-input-number {
+  background: #333;
+  border-color: #444;
+  color: #fff;
+}
+
+.video-editor .ant-input-number-input {
+  color: #fff;
+}
+
+.video-editor .ant-modal-content {
+  background: #2a2a2a;
+}
+
+.video-editor .ant-modal-header {
+  background: #2a2a2a;
+  border-bottom-color: #444;
+}
+
+.video-editor .ant-modal-title {
+  color: #fff;
+}
+
+.video-editor .ant-modal-footer {
+  border-top-color: #444;
 }
