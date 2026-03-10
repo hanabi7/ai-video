@@ -78,27 +78,59 @@ export interface ScriptProject {
   updatedAt: number;
 }
 
+// 角色/人设
 export interface Character {
   id: string;
   name: string;
   description: string;
   personality: string;
   appearance: string;
+  background?: string;
+  goals?: string;
+  age?: number;
+  gender?: string;
+  tags?: string[];
 }
 
+// 场景/Cut
 export interface Scene {
   id: string;
   sceneNumber: number;
+  title?: string;
   location: string;
   time: string;
   description: string;
   dialogue: Dialogue[];
+  characterIds?: string[]; // 关联的角色ID
+  worldSettingId?: string; // 关联的世界观设定ID
+  notes?: string;
 }
 
 export interface Dialogue {
   characterId: string;
   content: string;
   emotion?: string;
+  action?: string;
+}
+
+// 大纲/情节节点
+export interface OutlineNode {
+  id: string;
+  title: string;
+  content: string;
+  type: 'act1' | 'act2' | 'act3' | 'setup' | 'confrontation' | 'resolution' | 'custom';
+  order: number;
+  sceneIds?: string[]; // 关联的场景ID
+}
+
+// 世界观设定
+export interface WorldSetting {
+  id: string;
+  name: string;
+  category: 'era' | 'location' | 'rule' | 'culture' | 'technology' | 'magic' | 'custom';
+  description: string;
+  details?: string;
+  tags?: string[];
 }
 
 // 导出任务
@@ -117,7 +149,26 @@ interface CreatorState {
   // 当前项目
   currentProject: ScriptProject | null;
   
-  // 剧本创作
+  // 剧本创作模块导航
+  scriptModule: 'character' | 'outline' | 'script' | 'world' | 'chat';
+  
+  // 角色/人设管理
+  characters: Character[];
+  selectedCharacterId: string | null;
+  
+  // 大纲管理
+  outlineNodes: OutlineNode[];
+  selectedOutlineNodeId: string | null;
+  
+  // 场景/剧本管理
+  scenes: Scene[];
+  selectedSceneId: string | null;
+  
+  // 世界观管理
+  worldSettings: WorldSetting[];
+  selectedWorldSettingId: string | null;
+  
+  // 剧本创作聊天记录
   scriptMessages: ScriptMessage[];
   isScriptLoading: boolean;
   
@@ -145,11 +196,45 @@ interface CreatorState {
   
   // Actions
   setCurrentProject: (project: ScriptProject | null) => void;
+  
+  // 模块导航
+  setScriptModule: (module: CreatorState['scriptModule']) => void;
+  
+  // 角色管理
+  addCharacter: (character: Character) => void;
+  updateCharacter: (id: string, updates: Partial<Character>) => void;
+  removeCharacter: (id: string) => void;
+  setSelectedCharacter: (id: string | null) => void;
+  
+  // 大纲管理
+  addOutlineNode: (node: Omit<OutlineNode, 'order'>) => void;
+  updateOutlineNode: (id: string, updates: Partial<OutlineNode>) => void;
+  removeOutlineNode: (id: string) => void;
+  reorderOutlineNodes: (nodeIds: string[]) => void;
+  setSelectedOutlineNode: (id: string | null) => void;
+  
+  // 场景管理
+  addScene: (scene: Omit<Scene, 'sceneNumber'>) => void;
+  updateScene: (id: string, updates: Partial<Scene>) => void;
+  removeScene: (id: string) => void;
+  setSelectedScene: (id: string | null) => void;
+  
+  // 世界观管理
+  addWorldSetting: (setting: WorldSetting) => void;
+  updateWorldSetting: (id: string, updates: Partial<WorldSetting>) => void;
+  removeWorldSetting: (id: string) => void;
+  setSelectedWorldSetting: (id: string | null) => void;
+  
+  // 剧本消息
   addScriptMessage: (message: ScriptMessage) => void;
   setScriptLoading: (loading: boolean) => void;
+  
+  // 图片创作
   addImageTask: (task: ImageTask) => void;
   updateImageTask: (id: string, updates: Partial<ImageTask>) => void;
   removeImageTask: (id: string) => void;
+  
+  // 视频创作
   addVideoTask: (task: VideoTask) => void;
   updateVideoTask: (id: string, updates: Partial<VideoTask>) => void;
   removeVideoTask: (id: string) => void;
@@ -188,6 +273,27 @@ export const useCreatorStore = create<CreatorState>()(
   persist(
     (set, get) => ({
       currentProject: null,
+      
+      // 剧本创作模块导航
+      scriptModule: 'chat',
+      
+      // 角色管理
+      characters: [],
+      selectedCharacterId: null,
+      
+      // 大纲管理
+      outlineNodes: [],
+      selectedOutlineNodeId: null,
+      
+      // 场景管理
+      scenes: [],
+      selectedSceneId: null,
+      
+      // 世界观管理
+      worldSettings: [],
+      selectedWorldSettingId: null,
+      
+      // 剧本消息
       scriptMessages: [],
       isScriptLoading: false,
       imageTasks: [],
@@ -210,6 +316,84 @@ export const useCreatorStore = create<CreatorState>()(
       currentExportTask: null,
 
       setCurrentProject: (project) => set({ currentProject: project }),
+      
+      // 模块导航
+      setScriptModule: (module) => set({ scriptModule: module }),
+      
+      // 角色管理
+      addCharacter: (character) => set((state) => ({
+        characters: [...state.characters, character]
+      })),
+      updateCharacter: (id, updates) => set((state) => ({
+        characters: state.characters.map(c =>
+          c.id === id ? { ...c, ...updates } : c
+        )
+      })),
+      removeCharacter: (id) => set((state) => ({
+        characters: state.characters.filter(c => c.id !== id),
+        selectedCharacterId: state.selectedCharacterId === id ? null : state.selectedCharacterId
+      })),
+      setSelectedCharacter: (id) => set({ selectedCharacterId: id }),
+      
+      // 大纲管理
+      addOutlineNode: (node) => set((state) => {
+        const maxOrder = Math.max(0, ...state.outlineNodes.map(n => n.order));
+        return {
+          outlineNodes: [...state.outlineNodes, { ...node, order: maxOrder + 1 }]
+        };
+      }),
+      updateOutlineNode: (id, updates) => set((state) => ({
+        outlineNodes: state.outlineNodes.map(n =>
+          n.id === id ? { ...n, ...updates } : n
+        )
+      })),
+      removeOutlineNode: (id) => set((state) => ({
+        outlineNodes: state.outlineNodes.filter(n => n.id !== id),
+        selectedOutlineNodeId: state.selectedOutlineNodeId === id ? null : state.selectedOutlineNodeId
+      })),
+      reorderOutlineNodes: (nodeIds) => set((state) => ({
+        outlineNodes: nodeIds
+          .map((id, index) => {
+            const node = state.outlineNodes.find(n => n.id === id);
+            return node ? { ...node, order: index } : null;
+          })
+          .filter((n): n is OutlineNode => n !== null)
+          .sort((a, b) => a.order - b.order)
+      })),
+      setSelectedOutlineNode: (id) => set({ selectedOutlineNodeId: id }),
+      
+      // 场景管理
+      addScene: (scene) => set((state) => {
+        const maxNumber = Math.max(0, ...state.scenes.map(s => s.sceneNumber));
+        return {
+          scenes: [...state.scenes, { ...scene, sceneNumber: maxNumber + 1 }]
+        };
+      }),
+      updateScene: (id, updates) => set((state) => ({
+        scenes: state.scenes.map(s =>
+          s.id === id ? { ...s, ...updates } : s
+        )
+      })),
+      removeScene: (id) => set((state) => ({
+        scenes: state.scenes.filter(s => s.id !== id),
+        selectedSceneId: state.selectedSceneId === id ? null : state.selectedSceneId
+      })),
+      setSelectedScene: (id) => set({ selectedSceneId: id }),
+      
+      // 世界观管理
+      addWorldSetting: (setting) => set((state) => ({
+        worldSettings: [...state.worldSettings, setting]
+      })),
+      updateWorldSetting: (id, updates) => set((state) => ({
+        worldSettings: state.worldSettings.map(w =>
+          w.id === id ? { ...w, ...updates } : w
+        )
+      })),
+      removeWorldSetting: (id) => set((state) => ({
+        worldSettings: state.worldSettings.filter(w => w.id !== id),
+        selectedWorldSettingId: state.selectedWorldSettingId === id ? null : state.selectedWorldSettingId
+      })),
+      setSelectedWorldSetting: (id) => set({ selectedWorldSettingId: id }),
       
       addScriptMessage: (message) => set((state) => ({
         scriptMessages: [...state.scriptMessages, message]
@@ -404,6 +588,10 @@ export const useCreatorStore = create<CreatorState>()(
       name: 'creator-storage',
       partialize: (state) => ({
         currentProject: state.currentProject,
+        characters: state.characters,
+        outlineNodes: state.outlineNodes,
+        scenes: state.scenes,
+        worldSettings: state.worldSettings,
         clips: state.clips,
         audioTracks: state.audioTracks,
         exportTasks: state.exportTasks,
