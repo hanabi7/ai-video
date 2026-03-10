@@ -9,6 +9,7 @@ dotenv.config();
 // 导入路由
 import imageRoutes from './routes/images';
 import videoRoutes from './routes/videos';
+import editorRoutes from './routes/editor';
 
 // 导入服务工厂（确保服务被初始化）
 import './services/factory';
@@ -35,6 +36,7 @@ app.use((req, res, next) => {
 // API 路由
 app.use('/api/images', imageRoutes);
 app.use('/api/videos', videoRoutes);
+app.use('/api/editor', editorRoutes);
 
 // 支持的平台列表
 app.get('/api/platforms', (req, res) => {

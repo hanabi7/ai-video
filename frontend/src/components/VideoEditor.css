@@ -15,12 +15,16 @@
   padding: 8px 16px;
   background: #2a2a2a;
   border-bottom: 1px solid #3a3a3a;
+  flex-shrink: 0;
 }
 
 .time-display {
   color: #1890ff;
   font-family: monospace;
   font-size: 14px;
+  background: #1a1a1a;
+  padding: 4px 12px;
+  border-radius: 4px;
 }
 
 /* 主编辑区 */
@@ -34,27 +38,26 @@
 .preview-section {
   flex: 1;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   background: #0a0a0a;
   padding: 16px;
+  overflow: hidden;
 }
 
 .preview-video {
-  width: 100%;
-  max-width: 480px;
-  aspect-ratio: 16/9;
-  background: #1a1a1a;
-  border-radius: 8px;
-  overflow: hidden;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #1a1a1a;
+  border-radius: 8px;
+  overflow: hidden;
+  min-height: 200px;
 }
 
 .preview-video video {
-  width: 100%;
-  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
 }
 
@@ -64,13 +67,45 @@
   margin-top: 8px;
 }
 
+/* 预览控制 */
+.preview-controls {
+  margin-top: 16px;
+  padding: 0 8px;
+}
+
+.preview-controls .ant-slider {
+  margin: 8px 0;
+}
+
+.preview-controls .ant-slider-track {
+  background: linear-gradient(90deg, #1890ff, #40a9ff);
+}
+
+.preview-controls .ant-slider-handle {
+  border-color: #1890ff;
+  background: #1890ff;
+}
+
+/* 片段信息面板 */
+.clip-info-panel {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 8px;
+  background: #1f1f1f;
+  border-radius: 4px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 /* 素材区 */
 .assets-section {
-  width: 240px;
+  width: 260px;
   background: #242424;
   border-left: 1px solid #3a3a3a;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
 }
 
 .assets-section .ant-tabs {
@@ -92,20 +127,67 @@
 .assets-list {
   padding: 12px;
   height: 100%;
+  overflow-y: auto;
 }
 
 /* 时间轴区域 */
 .timeline-section {
-  height: 140px;
+  height: 160px;
   background: #1f1f1f;
   border-top: 1px solid #3a3a3a;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
 }
 
 .timeline-ruler {
   padding: 8px 16px 0;
   background: #2a2a2a;
+  position: relative;
+  height: 40px;
+}
+
+.time-markers {
+  position: relative;
+  height: 16px;
+  margin-bottom: 4px;
+}
+
+.time-marker {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-left: 1px solid #555;
+  padding-left: 4px;
+}
+
+.time-label {
+  font-size: 10px;
+  color: #888;
+  white-space: nowrap;
+}
+
+/* 播放头 */
+.playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #ff4d4f;
+  z-index: 100;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.playhead::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid #ff4d4f;
 }
 
 .timeline-ruler .ant-slider {
@@ -118,15 +200,17 @@
 
 .timeline-ruler .ant-slider-handle {
   border-color: #1890ff;
+  display: none; /* 隐藏滑块，使用播放头 */
 }
 
 /* 轨道 */
 .timeline-track {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   padding: 4px 0;
   border-bottom: 1px solid #333;
-  height: 50px;
+  height: 55px;
+  position: relative;
 }
 
 .track-label {
@@ -138,16 +222,17 @@
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
+  background: #242424;
+  border-right: 1px solid #333;
 }
 
 .track-content {
   flex: 1;
-  height: 40px;
-  background: #151515;
-  border-radius: 4px;
-  margin-right: 12px;
+  margin: 0 12px;
   position: relative;
   overflow: hidden;
+  background: #151515;
+  border-radius: 4px;
 }
 
 .empty-track {
@@ -161,69 +246,149 @@
   border-radius: 4px;
 }
 
-/* 视频片段 */
-.clip-item {
+/* 视频片段容器 */
+.clip-container {
   position: absolute;
   top: 4px;
-  height: 32px;
+  height: calc(100% - 8px);
+  cursor: grab;
+  user-select: none;
+  transition: transform 0.1s;
+}
+
+.clip-container:hover {
+  z-index: 10;
+}
+
+.clip-container.selected {
+  z-index: 20;
+}
+
+.clip-container.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.clip-container.drag-over::before {
+  content: '';
+  position: absolute;
+  left: -2px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #52c41a;
+  border-radius: 2px;
+}
+
+/* 增强的视频片段 */
+.clip-item-enhanced {
+  height: 100%;
   background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
   border-radius: 4px;
   display: flex;
   align-items: center;
-  padding: 0 8px;
-  gap: 6px;
-  cursor: pointer;
+  padding: 0 4px;
+  gap: 4px;
   font-size: 11px;
   color: #fff;
   box-shadow: 0 2px 4px rgba(0,0,0,0.3);
   transition: all 0.2s;
+  overflow: hidden;
 }
 
-.clip-item:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+.clip-container.selected .clip-item-enhanced {
+  box-shadow: 0 0 0 2px #ffd700, 0 4px 8px rgba(0,0,0,0.4);
 }
 
-.clip-item.selected {
-  box-shadow: 0 0 0 2px #ffd700;
-}
-
-.clip-drag {
+.clip-drag-handle {
   cursor: grab;
   opacity: 0.7;
+  padding: 2px;
+  flex-shrink: 0;
+}
+
+.clip-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
 }
 
 .clip-name {
-  flex: 1;
+  font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.clip-duration {
-  font-size: 10px;
+.clip-info {
+  font-size: 9px;
   opacity: 0.8;
-  background: rgba(0,0,0,0.3);
-  padding: 2px 4px;
-  border-radius: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.clip-delete {
+.clip-actions {
+  display: flex;
+  gap: 2px;
   opacity: 0;
   transition: opacity 0.2s;
-  padding: 0 2px !important;
-  color: #fff !important;
+  flex-shrink: 0;
 }
 
-.clip-item:hover .clip-delete {
+.clip-container:hover .clip-actions,
+.clip-container.selected .clip-actions {
   opacity: 1;
 }
 
-/* 音频片段 */
-.audio-item {
+.clip-actions .ant-btn {
+  color: #fff !important;
+  padding: 0 2px !important;
+  min-width: 20px;
+  height: 20px;
+}
+
+/* 裁剪指示器 */
+.clip-trim-indicators {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.clip-container:hover .clip-trim-indicators,
+.clip-container.selected .clip-trim-indicators {
+  opacity: 1;
+}
+
+.trim-handle {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  width: 4px;
+  background: #fff;
+  border-radius: 2px;
+}
+
+.trim-handle.left {
+  left: 0;
+}
+
+.trim-handle.right {
+  right: 0;
+}
+
+/* 音频片段增强 */
+.audio-item-enhanced {
   position: absolute;
   top: 8px;
-  height: 24px;
+  height: calc(100% - 16px);
   background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
   border-radius: 4px;
   display: flex;
@@ -233,21 +398,44 @@
   font-size: 11px;
   color: #fff;
   box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  overflow: hidden;
+  min-width: 80px;
+}
+
+.audio-icon {
+  flex-shrink: 0;
+}
+
+.audio-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
 }
 
 .audio-name {
-  flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.audio-volume {
-  font-size: 9px;
-  opacity: 0.8;
-  background: rgba(0,0,0,0.3);
-  padding: 1px 4px;
-  border-radius: 2px;
+.audio-volume-slider {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.audio-volume-slider .ant-slider-rail {
+  background: rgba(255,255,255,0.3);
+}
+
+.audio-volume-slider .ant-slider-track {
+  background: #fff;
+}
+
+.audio-volume-slider .ant-slider-handle {
+  border-color: #fff;
+  background: #fff;
 }
 
 .audio-delete {
@@ -255,18 +443,10 @@
   transition: opacity 0.2s;
   padding: 0 2px !important;
   color: #fff !important;
+  flex-shrink: 0;
 }
 
-.audio-item:hover .audio-delete {
-  opacity: 1;
-}
-
-/* 选中片段样式 */
-.selected-clip-item {
-  background: rgba(24, 144, 255, 0.1);
-}
-
-.selected-clip-item .ant-list-item-action {
+.audio-item-enhanced:hover .audio-delete {
   opacity: 1;
 }
 
@@ -282,10 +462,9 @@
   border-color: #1890ff;
 }
 
-.video-editor .ant-btn-primary:disabled {
-  background: #1f1f1f;
-  border-color: #333;
-  color: #666;
+.video-editor .ant-btn-text {
+  border-color: transparent;
+  background: transparent;
 }
 
 .video-editor .ant-select-selector {
@@ -305,6 +484,7 @@
 .video-editor .ant-list-item {
   border-bottom-color: #333;
   color: #ccc;
+  padding: 8px 0;
 }
 
 .video-editor .ant-empty-description {
@@ -317,29 +497,92 @@
   color: #ccc;
 }
 
-.video-editor .ant-input-number {
-  background: #333;
-  border-color: #444;
-  color: #fff;
+/* 裁剪模态框 */
+.trim-modal-content {
+  padding: 16px 0;
 }
 
-.video-editor .ant-input-number-input {
-  color: #fff;
+.trim-preview {
+  background: #1a1a1a;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 16px;
 }
 
-.video-editor .ant-modal-content {
-  background: #2a2a2a;
+.trim-controls {
+  padding: 0 8px;
 }
 
-.video-editor .ant-modal-header {
-  background: #2a2a2a;
-  border-bottom-color: #444;
+.trim-values {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 14px;
 }
 
-.video-editor .ant-modal-title {
-  color: #fff;
+.trim-values span {
+  background: #f0f0f0;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-family: monospace;
 }
 
-.video-editor .ant-modal-footer {
-  border-top-color: #444;
+.trim-inputs {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.trim-inputs .ant-input-number {
+  flex: 1;
+}
+
+/* 导出模态框 */
+.export-modal-content {
+  padding: 24px 0;
+  text-align: center;
+}
+
+.export-status {
+  margin-top: 16px;
+  color: #666;
+}
+
+/* 滚动条样式 */
+.video-editor ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.video-editor ::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+.video-editor ::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 3px;
+}
+
+.video-editor ::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* 响应式调整 */
+@media (max-width: 1200px) {
+  .assets-section {
+    width: 220px;
+  }
+}
+
+@media (max-width: 992px) {
+  .editor-main {
+    flex-direction: column;
+  }
+  
+  .assets-section {
+    width: 100%;
+    height: 200px;
+    border-left: none;
+    border-top: 1px solid #3a3a3a;
+  }
 }
