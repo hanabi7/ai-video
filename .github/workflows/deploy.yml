@@ -1,0 +1,103 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: '部署环境'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install backend dependencies
+      run: |
+        cd backend
+        npm ci
+
+    - name: Install frontend dependencies
+      run: |
+        cd frontend
+        npm ci
+
+    - name: Build frontend
+      run: |
+        cd frontend
+        npm run build
+
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.8.0
+      with:
+        ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
+
+    - name: Add host to known hosts
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+    - name: Deploy to server
+      env:
+        SERVER_HOST: ${{ secrets.SERVER_HOST }}
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+      run: |
+        # 创建临时部署目录
+        ssh $SERVER_USER@$SERVER_HOST "mkdir -p ~/ai-video-deploy"
+        
+        # 传输文件
+        rsync -avz --delete \
+          --exclude='node_modules' \
+          --exclude='.git' \
+          --exclude='frontend/dist' \
+          ./ $SERVER_USER@$SERVER_HOST:~/ai-video-deploy/
+        
+        # 在服务器上执行部署
+        ssh $SERVER_USER@$SERVER_HOST "
+          cd ~/ai-video-deploy
+          
+          # 创建环境变量文件
+          echo 'DREAMINA_API_KEY=${{ secrets.DREAMINA_API_KEY }}' > .env
+          echo 'TONGYI_API_KEY=${{ secrets.TONGYI_API_KEY }}' >> .env
+          
+          # 复制到生产目录
+          sudo mkdir -p /opt/ai-video
+          sudo cp -r . /opt/ai-video/
+          
+          # 执行部署脚本
+          cd /opt/ai-video
+          sudo chmod +x scripts/deploy.sh
+          sudo ./scripts/deploy.sh
+        "
+
+    - name: Health check
+      run: |
+        sleep 10
+        curl -f http://${{ secrets.SERVER_HOST }}:3001/api/health || exit 1
+
+    - name: Notify success
+      if: success()
+      run: |
+        echo "🎉 部署成功！"
+        echo "访问地址: http://${{ secrets.SERVER_HOST }}"
+
+    - name: Notify failure
+      if: failure()
+      run: |
+        echo "❌ 部署失败，请检查日志"

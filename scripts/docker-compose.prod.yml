@@ -1,0 +1,45 @@
+# AI Video Creator - 部署相关文件
+
+# 1. Docker Compose 生产配置
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: ai-video-backend
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - DREAMINA_API_KEY=${DREAMINA_API_KEY}
+      - TONGYI_API_KEY=${TONGYI_API_KEY}
+    volumes:
+      - ../backend/data:/app/data
+    networks:
+      - ai-video-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: ai-video-frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - ai-video-network
+
+networks:
+  ai-video-network:
+    driver: bridge
