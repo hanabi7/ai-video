@@ -101,7 +101,7 @@ const video = await sdk.generateVideoAndWait({
 - [x] 后端服务搭建
 - [x] 接入即梦 API
 - [x] SDK + CLI 工具
-- [ ] 视频剪辑功能完善
+- [x] 视频剪辑功能完善 (裁剪/分割/排序/导出)
 - [ ] 支持更多 AI 平台
 - [ ] 项目管理系统
 
