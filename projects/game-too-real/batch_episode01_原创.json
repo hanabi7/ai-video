@@ -1,0 +1,142 @@
+{
+  "project": "末日游戏公司 - 第一集",
+  "episode": "新手策划",
+  "note": "原创改编，避免版权问题",
+  "batch": [
+    {
+      "type": "image",
+      "name": " establishing-废土全景",
+      "request": {
+        "prompt": "Post-apocalyptic wasteland cityscape, ruined skyscrapers covered in glowing vines, yellow-gray sky with radiation clouds, abandoned highway, cinematic establishing shot, 8k quality, fallout meets cyberpunk aesthetic",
+        "style": "cinematic",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "image", 
+      "name": "避难所大门",
+      "request": {
+        "prompt": "Hidden underground bunker entrance, massive industrial metal door, glowing blue control panel, post-apocalyptic setting, dust particles, dramatic lighting, sci-fi movie style",
+        "style": "cinematic",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "image",
+      "name": "主角林默",
+      "request": {
+        "prompt": "Young Chinese man, 23 years old, lean but strong build, calm and sharp eyes, short black hair, wearing modified protective suit and old trench coat, holding holographic tablet, underground bunker background, realistic style, cinematic portrait",
+        "style": "realistic",
+        "ratio": "9:16"
+      }
+    },
+    {
+      "type": "image",
+      "name": "系统AI艾达",
+      "request": {
+        "prompt": "Holographic AI assistant, blue to purple gradient hair anime girl, wearing dress made of data streams, translucent glowing body, blue particles floating around, cyberpunk control room background, anime style",
+        "style": "anime",
+        "ratio": "9:16"
+      }
+    },
+    {
+      "type": "image",
+      "name": "系统界面UI",
+      "request": {
+        "prompt": "Futuristic metaverse game UI interface, holographic display, blue and purple color scheme, Chinese text elements, sci-fi HUD design, transparent panels with data visualization, cyberpunk aesthetic",
+        "style": "cyberpunk",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "image",
+      "name": "传送光束",
+      "request": {
+        "prompt": "Three teleportation beams of blue energy descending from ceiling, particle effects, underground bunker interior, three休眠舱 opening, glowing effects, sci-fi transportation, dramatic lighting",
+        "style": "cinematic",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "image",
+      "name": "玩家陈昊",
+      "request": {
+        "prompt": "28 year old Chinese man, programmer type, glasses, slightly chubby, curious analytical expression, wearing plaid shirt and jeans, examining his hands in VR game, sci-fi setting, realistic style",
+        "style": "realistic",
+        "ratio": "9:16"
+      }
+    },
+    {
+      "type": "image",
+      "name": "玩家唐甜",
+      "request": {
+        "prompt": "22 year old cute Chinese girl, streamer type, big eyes, long hair in ponytail, pink hoodie and skirt, excited and slightly scared expression, holding selfie stick, wasteland background, realistic style",
+        "style": "realistic",
+        "ratio": "9:16"
+      }
+    },
+    {
+      "type": "image",
+      "name": "玩家刘铁",
+      "request": {
+        "prompt": "32 year old muscular Chinese man, fitness trainer, buzz cut, confident grin, wearing tight tank top showing muscles, ready to fight pose, wasteland background, realistic style",
+        "style": "realistic",
+        "ratio": "9:16"
+      }
+    },
+    {
+      "type": "image",
+      "name": "辐射犬",
+      "request": {
+        "prompt": "Mutated wasteland wolf creature, skin ulcerated and glowing blue veins, luminescent blue eyes, cybernetic enhancements, radioactive glow patches, aggressive hunting pose, sci-fi horror design",
+        "style": "cinematic",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "image",
+      "name": "废土战斗场景",
+      "request": {
+        "prompt": "Three people fighting mutated creatures in ruined city, programmer hiding and analyzing, cute girl screaming and throwing stones, muscular man punching, dynamic action, dust and debris, cinematic composition",
+        "style": "cinematic",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "image",
+      "name": "避难所内部",
+      "request": {
+        "prompt": "Underground bunker interior with industrial design, people working together, blue holographic displays, warm orange warning lights, hope and community atmosphere, sci-fi movie set",
+        "style": "cinematic",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "image",
+      "name": "结尾-希望曙光",
+      "request": {
+        "prompt": "Young man silhouette looking at horizon, behind him warm community lights, distant wasteland with first ray of sunlight breaking through radiation clouds, contrast between dark outside and hope inside",
+        "style": "cinematic",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "video",
+      "name": "传送特效",
+      "request": {
+        "prompt": "Blue energy teleportation beam effect descending from above, particle effects swirling, sci-fi transportation animation, glowing light beam, futuristic technology visualization",
+        "duration": 5,
+        "platform": "dreamina"
+      }
+    },
+    {
+      "type": "video",
+      "name": "系统界面动效",
+      "request": {
+        "prompt": "Futuristic holographic metaverse UI animation, blue and purple data flowing, interface elements opening, sci-fi HUD motion graphics, cyberpunk style",
+        "duration": 5,
+        "platform": "dreamina"
+      }
+    }
+  ]
+}

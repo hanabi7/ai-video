@@ -1,0 +1,141 @@
+{
+  "project": "这游戏也太真实了 - 第一集",
+  "episode": "觉醒",
+  "batch": [
+    {
+      "type": "image",
+      "name": " establishing-废土全景",
+      "request": {
+        "prompt": "Post-apocalyptic wasteland cityscape, ruined skyscrapers covered in vines, gray sky with dust particles, abandoned highway with tumbleweed, cinematic lighting, drone shot perspective, 8k quality, cyberpunk meets fallout aesthetic",
+        "style": "cinematic",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "image", 
+      "name": "避难所大门",
+      "request": {
+        "prompt": "Massive underground bunker metal door, heavy industrial design, glowing control panel, post-apocalyptic aesthetic, dust particles in air, dramatic lighting from inside, sci-fi movie style",
+        "style": "cinematic",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "image",
+      "name": "主角楚光",
+      "request": {
+        "prompt": "Young Chinese man, 22 years old, lean but strong build, sharp eyes, wearing worn but clean underground bunker uniform, holding glowing holographic device, determined expression, post-apocalyptic setting, cinematic portrait",
+        "style": "realistic",
+        "ratio": "9:16"
+      }
+    },
+    {
+      "type": "image",
+      "name": "系统AI小柒",
+      "request": {
+        "prompt": "Holographic AI assistant, silver hair anime girl, futuristic uniform, translucent glowing body, floating in air, blue and white digital particles, sci-fi control room background, anime style",
+        "style": "anime",
+        "ratio": "9:16"
+      }
+    },
+    {
+      "type": "image",
+      "name": "系统界面UI",
+      "request": {
+        "prompt": "Futuristic game UI interface, holographic display, blue and white color scheme, Chinese text elements, sci-fi HUD design, transparent panels with data visualization, cyberpunk aesthetic",
+        "style": "cyberpunk",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "image",
+      "name": "传送光束",
+      "request": {
+        "prompt": "Three teleportation beams of light descending from sky, energy particles, underground bunker interior, sci-fi transportation pods opening, glowing effects, dramatic lighting",
+        "style": "cinematic",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "image",
+      "name": "玩家老白",
+      "request": {
+        "prompt": "30 year old Chinese man, programmer type, glasses, curious expression, wearing futuristic VR game suit, examining his hands in wonder, sci-fi setting, realistic style",
+        "style": "realistic",
+        "ratio": "9:16"
+      }
+    },
+    {
+      "type": "image",
+      "name": "玩家夏盐",
+      "request": {
+        "prompt": "24 year old Chinese girl, college student look, expressive face, slightly scared but excited expression, casual clothes, holding a stone as weapon, post-apocalyptic background, realistic style",
+        "style": "realistic",
+        "ratio": "9:16"
+      }
+    },
+    {
+      "type": "image",
+      "name": "玩家力量哥",
+      "request": {
+        "prompt": "35 year old muscular Chinese man, gym enthusiast, confident grin, wearing tank top, showing off muscles, ready to fight pose, wasteland background, realistic style",
+        "style": "realistic",
+        "ratio": "9:16"
+      }
+    },
+    {
+      "type": "image",
+      "name": "变异兽",
+      "request": {
+        "prompt": "Mutated wolf creature, post-apocalyptic wasteland beast, glowing red eyes, cybernetic enhancements, radioactive glow, aggressive pose, sci-fi horror design, dark atmosphere",
+        "style": "cinematic",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "image",
+      "name": "废土战斗场景",
+      "request": {
+        "prompt": "Three people fighting mutated beast in ruined city, dynamic action pose, dust and debris, post-apocalyptic setting, cinematic composition, dramatic lighting, intense battle scene",
+        "style": "cinematic",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "image",
+      "name": "避难所内部",
+      "request": {
+        "prompt": "Underground bunker interior, industrial design, people working together, warm lighting contrast with cold exterior, hope and community atmosphere, sci-fi movie set design",
+        "style": "cinematic",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "image",
+      "name": "结尾-希望曙光",
+      "request": {
+        "prompt": "Young man silhouette looking at horizon, behind him warm light of community working, distant wasteland with first ray of sunlight breaking through clouds, contrast between dark outside and warm inside, hopeful atmosphere",
+        "style": "cinematic",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "video",
+      "name": "传送特效",
+      "request": {
+        "prompt": "Teleportation beam effect, energy particles descending, sci-fi transportation animation, glowing light beam, particle effects, futuristic technology",
+        "duration": 5,
+        "platform": "dreamina"
+      }
+    },
+    {
+      "type": "video",
+      "name": "系统界面动效",
+      "request": {
+        "prompt": "Futuristic holographic UI animation, data flowing, interface elements opening and closing, blue and white color scheme, sci-fi HUD motion graphics",
+        "duration": 5,
+        "platform": "dreamina"
+      }
+    }
+  ]
+}
