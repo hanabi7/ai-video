@@ -1,0 +1,49 @@
+.manju-editor {
+  min-height: 100vh;
+  background: #f0f2f5;
+}
+
+.manju-header {
+  background: #fff;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 24px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.manju-header h2 {
+  margin: 0;
+  color: #1890ff;
+}
+
+.manju-header .subtitle {
+  color: #8c8c8c;
+  font-size: 14px;
+}
+
+.manju-content {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.steps-card {
+  margin-bottom: 24px;
+}
+
+.manju-steps {
+  padding: 16px 0;
+}
+
+.panel-card {
+  min-height: 500px;
+}
+
+.action-bar {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e8e8e8;
+}
