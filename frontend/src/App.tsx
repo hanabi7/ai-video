@@ -13,6 +13,7 @@ import { ImageCreator } from './components/ImageCreator';
 import { VideoCreator } from './components/VideoCreator';
 import { VideoEditor } from './components/VideoEditor';
 import { ProjectManager } from './components/ProjectManager';
+import { NovelLibrary } from './components/NovelLibrary';
 import { useCreatorStore } from './store/creatorStore';
 import './App.css';
 
@@ -72,8 +73,15 @@ function App() {
                   <Tag className="message-count">{scriptMessages.length}</Tag>
                 )}
               </div>
-              <div className="panel-content">
-                <ScriptCreator />
+              <div className="panel-content panel-script-content">
+                {/* 小说列表区域 - 可折叠 */}
+                <div className="novel-list-section">
+                  <NovelLibrary />
+                </div>
+                {/* 剧本创作区域 */}
+                <div className="script-creator-section">
+                  <ScriptCreator />
+                </div>
               </div>
             </div>
 

@@ -1,0 +1,374 @@
+/* 小说图书馆样式 */
+
+.novel-library {
+  padding: 20px;
+  background: #f5f5f5;
+  min-height: 100%;
+  position: relative;
+}
+
+.novel-library-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.novel-library-loading p {
+  margin-top: 16px;
+  color: #666;
+}
+
+/* 头部 */
+.novel-library-header {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.library-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 !important;
+}
+
+.update-time {
+  font-size: 12px;
+  margin-left: auto;
+}
+
+/* 分类导航 */
+.category-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.category-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #f0f0f0;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.category-nav-item:hover {
+  background: #e6f7ff;
+  transform: translateY(-2px);
+}
+
+.category-nav-item.active {
+  background: #1890ff;
+  color: #fff;
+}
+
+.category-nav-item.active .category-count .ant-badge-count {
+  background: #fff !important;
+  color: #1890ff !important;
+}
+
+.category-name {
+  font-weight: 500;
+}
+
+.category-count .ant-badge-count {
+  background: #bfbfbf;
+  font-size: 11px;
+  height: 18px;
+  line-height: 18px;
+  padding: 0 6px;
+}
+
+.expand-icon {
+  font-size: 10px;
+  transition: transform 0.3s ease;
+  margin-left: 4px;
+}
+
+.expand-icon.expanded {
+  transform: rotate(180deg);
+}
+
+/* 分类区域 */
+.novels-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.category-section {
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.category-section:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.category-header:hover {
+  background: linear-gradient(135deg, #5a6fd6 0%, #6a4190 100%);
+}
+
+.category-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.category-title {
+  color: #fff !important;
+  margin: 0 !important;
+}
+
+/* 小说网格 */
+.novels-grid-wrapper {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-in-out;
+}
+
+.novels-grid-wrapper.show {
+  max-height: 2000px;
+}
+
+.novels-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  padding: 20px;
+}
+
+/* 小说卡片 */
+.novel-card-wrapper {
+  position: relative;
+}
+
+.novel-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.novel-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.novel-rank {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 1;
+}
+
+.novel-content {
+  padding-top: 8px;
+}
+
+.novel-title-wrapper {
+  margin-bottom: 8px;
+}
+
+.novel-title {
+  font-weight: 600;
+  font-size: 14px;
+  display: block;
+}
+
+.novel-meta {
+  margin-bottom: 8px;
+}
+
+.novel-author {
+  font-size: 12px;
+}
+
+.novel-stats {
+  margin-bottom: 8px;
+}
+
+.read-count-tag {
+  font-size: 11px;
+}
+
+.novel-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.novel-tag {
+  font-size: 10px;
+}
+
+/* 悬浮预览 */
+.novel-preview-popup {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.preview-card {
+  width: 400px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.preview-content {
+  display: flex;
+  gap: 16px;
+}
+
+.preview-cover-wrapper {
+  flex-shrink: 0;
+  width: 120px;
+  height: 160px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.preview-cover-placeholder {
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.preview-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.preview-title {
+  margin-bottom: 12px !important;
+  font-size: 16px !important;
+}
+
+.preview-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.preview-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.preview-description {
+  color: #666;
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.preview-rank {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .novels-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .category-nav {
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .category-nav-item {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .preview-card {
+    width: 320px;
+  }
+
+  .preview-content {
+    flex-direction: column;
+  }
+
+  .preview-cover-wrapper {
+    width: 100%;
+    height: 120px;
+  }
+}
+
+/* 滚动条美化 */
+.novel-library::-webkit-scrollbar {
+  width: 6px;
+}
+
+.novel-library::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.novel-library::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.novel-library::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}

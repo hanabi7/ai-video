@@ -1,0 +1,102 @@
+{
+  "updateTime": "2026-03-11T14:30:00.000Z",
+  "source": "fanqienovel.com",
+  "categories": [
+    {
+      "category": "都市",
+      "categoryId": "dushi",
+      "novels": [
+        { "rank": 1, "title": "我不是戏神", "author": "三九音域", "cover": "https://p1-tt.byteimg.com/img/novel/1.jpg", "description": "赤色流星划过天际后，人类文明陷入停滞。从那天起，人们再也无法制造一枚火箭、一颗核弹、一架飞机...", "readCount": "580万", "tags": ["都市高武", "悬疑"] },
+        { "rank": 2, "title": "我在精神病院学斩神", "author": "三九音域", "cover": "https://p1-tt.byteimg.com/img/novel/2.jpg", "description": "你是否想过，在霓虹璀璨的都市之下，潜藏着来自古老神话的怪物？", "readCount": "9200万", "tags": ["都市高武", "神话"] },
+        { "rank": 3, "title": "诸神愚戏", "author": "一月九十秋", "cover": "https://p1-tt.byteimg.com/img/novel/3.jpg", "description": "众神降临，万族林立。以神明为棋子，以世界为棋盘，众生皆为愚者。", "readCount": "320万", "tags": ["都市高武", "游戏"] },
+        { "rank": 4, "title": "开局地摊卖大力", "author": "弈青锋", "cover": "https://p1-tt.byteimg.com/img/novel/4.jpg", "description": "在这个灵气复苏的时代，主角却选择了摆地摊卖大力丸...", "readCount": "4200万", "tags": ["灵气复苏", "搞笑"] },
+        { "rank": 5, "title": "时停起手，邪神也得给我跪下", "author": "三九音域", "cover": "https://p1-tt.byteimg.com/img/novel/5.jpg", "description": "当时间停止，万物静止，唯有我能够行动...", "readCount": "180万", "tags": ["都市高武", "异能"] },
+        { "rank": 6, "title": "高手下山，我有九个无敌师父", "author": "小殇殇", "cover": "https://p1-tt.byteimg.com/img/novel/6.jpg", "description": "身怀绝技，高手下山。九个师父，各怀神通...", "readCount": "250万", "tags": ["都市修真", "爽文"] },
+        { "rank": 7, "title": "重生之都市修仙", "author": "十里剑神", "cover": "https://p1-tt.byteimg.com/img/novel/7.jpg", "description": "渡劫期大修士陈凡陨落在天劫中，却一梦五百年重回地球的年少时代...", "readCount": "6800万", "tags": ["重生", "修仙"] },
+        { "rank": 8, "title": "都市：修仙十年，下山即无敌", "author": "冯一病", "cover": "https://p1-tt.byteimg.com/img/novel/8.jpg", "description": "十年修仙，一朝下山。都市之中，谁与争锋？", "readCount": "420万", "tags": ["都市修真", "无敌"] },
+        { "rank": 9, "title": "我的右眼是神级计算机", "author": "王自律", "cover": "https://p1-tt.byteimg.com/img/novel/9.jpg", "description": "右眼变异，变成了一台神级计算机，从此开启不一样的人生...", "readCount": "380万", "tags": ["科幻", "系统"] },
+        { "rank": 10, "title": "开局失业，我让歌坛大魔王回归", "author": " Herbal", "cover": "https://p1-tt.byteimg.com/img/novel/10.jpg", "description": "失业后意外获得系统，让曾经的歌坛大魔王重回巅峰...", "readCount": "120万", "tags": ["娱乐圈", "系统"] }
+      ]
+    },
+    {
+      "category": "玄幻",
+      "categoryId": "xuanhuan",
+      "novels": [
+        { "rank": 1, "title": "逆天邪神", "author": "火星引力", "cover": "https://p1-tt.byteimg.com/img/novel/11.jpg", "description": "掌天毒之珠，承邪神之血，修逆天之力，一代邪神，君临天下！", "readCount": "8900万", "tags": ["玄幻", "爽文"] },
+        { "rank": 2, "title": "万古神帝", "author": "飞天鱼", "cover": "https://p1-tt.byteimg.com/img/novel/12.jpg", "description": "八百年前，明帝之子张若尘，被未婚妻池瑶公主杀死...", "readCount": "7500万", "tags": ["重生", "复仇"] },
+        { "rank": 3, "title": "深空彼岸", "author": "辰东", "cover": "https://p1-tt.byteimg.com/img/novel/13.jpg", "description": "浩瀚的宇宙中，一片死寂，星辰黯淡。在旧土与新星的交替时代...", "readCount": "4800万", "tags": ["未来世界", "进化"] },
+        { "rank": 4, "title": "道诡异仙", "author": "狐尾的笔", "cover": "https://p1-tt.byteimg.com/img/novel/14.jpg", "description": "诡异的天道，异常的仙佛，是真？是假？陷入迷惘的李火旺无法分辨...", "readCount": "5200万", "tags": ["克苏鲁", "诡异"] },
+        { "rank": 5, "title": "玄幻，我顿悟了混沌体", "author": "叶大刀", "cover": "https://p1-tt.byteimg.com/img/novel/15.jpg", "description": "一朝顿悟，觉醒混沌体，从此踏上无敌之路...", "readCount": "280万", "tags": ["玄幻", "顿悟"] },
+        { "rank": 6, "title": "武碎星河", "author": "妖夜", "cover": "https://p1-tt.byteimg.com/img/novel/16.jpg", "description": "武道极致，碎裂星河。少年崛起，踏破苍穹...", "readCount": "350万", "tags": ["玄幻", "热血"] },
+        { "rank": 7, "title": "系统赋我长生，我熬死了所有人", "author": "一只榴莲3号", "cover": "https://p1-tt.byteimg.com/img/novel/17.jpg", "description": "获得长生系统，却无法修炼，只能看着身边的人一个个离去...", "readCount": "420万", "tags": ["长生", "系统"] },
+        { "rank": 8, "title": "宝塔仙缘", "author": "箫不语", "cover": "https://p1-tt.byteimg.com/img/novel/18.jpg", "description": "一座神秘的宝塔，一段修仙的缘分...", "readCount": "180万", "tags": ["仙侠", "宝塔"] },
+        { "rank": 9, "title": "风起荒古", "author": "家养了只肥兔", "cover": "https://p1-tt.byteimg.com/img/novel/19.jpg", "description": "荒古世界，风云再起。少年崛起，逆天改命...", "readCount": "150万", "tags": ["玄幻", "荒古"] },
+        { "rank": 10, "title": "凡骨", "author": "壹更大师", "cover": "https://p1-tt.byteimg.com/img/novel/20.jpg", "description": "凡人修仙，以骨为基。平凡之骨，不凡之路...", "readCount": "220万", "tags": ["凡人流", "修仙"] }
+      ]
+    },
+    {
+      "category": "科幻",
+      "categoryId": "kehuan",
+      "novels": [
+        { "rank": 1, "title": "全球冰封：我打造了末日安全屋", "author": "记忆的海", "cover": "https://p1-tt.byteimg.com/img/novel/21.jpg", "description": "全球气温骤降，世界陷入冰封末日。主角提前预知灾难，打造地下安全屋...", "readCount": "1250万", "tags": ["末世", "生存", "基建"] },
+        { "rank": 2, "title": "末日生存方案供应商", "author": "往事如风", "cover": "https://p1-tt.byteimg.com/img/novel/22.jpg", "description": "末日降临，我是末日生存方案供应商...", "readCount": "380万", "tags": ["末日", "系统"] },
+        { "rank": 3, "title": "这游戏也太真实了", "author": "晨星LL", "cover": "https://p1-tt.byteimg.com/img/novel/23.jpg", "description": "穿越到废土时代，主角获得了一款完全真实的游戏系统...", "readCount": "3500万", "tags": ["第四天灾", "经营", "废土"] },
+        { "rank": 4, "title": "黎明之剑", "author": "远瞳", "cover": "https://p1-tt.byteimg.com/img/novel/24.jpg", "description": "高文穿越了，但穿越的时候好像出了点问题。他发现自己需要附身在一个已经死去700年的老祖宗身上...", "readCount": "3200万", "tags": ["种田", "西幻", "史诗"] },
+        { "rank": 5, "title": "灵境行者", "author": "卖报小郎君", "cover": "https://p1-tt.byteimg.com/img/novel/25.jpg", "description": "亘古通今，传闻世有灵境。关于灵境的说法，历代志怪笔记众说纷纭...", "readCount": "5100万", "tags": ["无限流", "副本"] },
+        { "rank": 6, "title": "我的细胞监狱", "author": "穿黄衣的阿肥", "cover": "https://p1-tt.byteimg.com/img/novel/26.jpg", "description": "重生为细胞，携狱典之力，来到古老者已苏醒的平行世界...", "readCount": "2800万", "tags": ["克苏鲁", "诡异", "黑暗"] },
+        { "rank": 7, "title": "天灾，我囤几十亿物资在末世求生", "author": "袅袅鱼音", "cover": "https://p1-tt.byteimg.com/img/novel/27.jpg", "description": "天灾降临，我囤积了几十亿物资，在末世中求生...", "readCount": "180万", "tags": ["末世", "囤货", "空间"] },
+        { "rank": 8, "title": "游戏入侵：抢男女主机缘会上瘾诶", "author": "猫不秃", "cover": "https://p1-tt.byteimg.com/img/novel/28.jpg", "description": "游戏入侵现实，我靠抢夺男女主机缘变强...", "readCount": "320万", "tags": ["游戏", "系统", "爽文"] },
+        { "rank": 9, "title": "末世：开局先囤十亿物资", "author": "天朝书生", "cover": "https://p1-tt.byteimg.com/img/novel/29.jpg", "description": "末世降临，开局先囤十亿物资...", "readCount": "150万", "tags": ["末世", "囤货"] },
+        { "rank": 10, "title": "全球灾变：开局建造末日堡垒", "author": "天榜留名", "cover": "https://p1-tt.byteimg.com/img/novel/30.jpg", "description": "灾变降临，开局建造末日堡垒...", "readCount": "120万", "tags": ["末世", "基建"] }
+      ]
+    },
+    {
+      "category": "仙侠",
+      "categoryId": "xianxia",
+      "novels": [
+        { "rank": 1, "title": "大奉打更人", "author": "卖报小郎君", "cover": "https://p1-tt.byteimg.com/img/novel/31.jpg", "description": "这个世界，有儒；有道；有佛；有妖；有术士。警校毕业的许七安幽幽醒来，发现自己身处牢狱之中...", "readCount": "9200万", "tags": ["探案", "朝堂", "权谋"] },
+        { "rank": 2, "title": "仙人之下我无敌，仙人之上一换一", "author": "insert into", "cover": "https://p1-tt.byteimg.com/img/novel/32.jpg", "description": "穿越到修仙世界，主角发现自己竟然是无敌的存在...", "readCount": "3800万", "tags": ["穿越", "无敌流"] },
+        { "rank": 3, "title": "我只想安静的做个苟道中人", "author": "爆炸小拿铁", "cover": "https://p1-tt.byteimg.com/img/novel/33.jpg", "description": "穿越到修仙界，主角绑定了一个系统，但这个系统好像不太正经...", "readCount": "2900万", "tags": ["系统", "苟道", "搞笑"] },
+        { "rank": 4, "title": "天渊", "author": "沐潇三生", "cover": "https://p1-tt.byteimg.com/img/novel/34.jpg", "description": "天渊之下，藏着什么秘密？一代天骄，踏天而行...", "readCount": "280万", "tags": ["仙侠", "秘境"] },
+        { "rank": 5, "title": "烟雨楼", "author": "一夕烟雨", "cover": "https://p1-tt.byteimg.com/img/novel/35.jpg", "description": "烟雨楼台，一剑倾城。少年剑客，问鼎天下...", "readCount": "450万", "tags": ["剑仙", "江湖"] },
+        { "rank": 6, "title": "问鼎仙途", "author": "枫舟问禅", "cover": "https://p1-tt.byteimg.com/img/novel/36.jpg", "description": "凡人问道，问鼎仙途。一步步踏上修仙之路...", "readCount": "180万", "tags": ["凡人流", "修仙"] },
+        { "rank": 7, "title": "长生烬", "author": "紫灵风雪", "cover": "https://p1-tt.byteimg.com/img/novel/37.jpg", "description": "追求长生，终成灰烬。但灰烬之中，亦有新生...", "readCount": "120万", "tags": ["长生", "轮回"] },
+        { "rank": 8, "title": "且渡无双", "author": "纸老虎", "cover": "https://p1-tt.byteimg.com/img/novel/38.jpg", "description": "无双之路，且行且渡。一剑破万法，一念度众生...", "readCount": "150万", "tags": ["剑修", "无敌"] },
+        { "rank": 9, "title": "我以狐仙镇百鬼", "author": "紫梦游龙", "cover": "https://p1-tt.byteimg.com/img/novel/39.jpg", "description": "狐仙附体，镇压百鬼。降妖除魔，守护人间...", "readCount": "280万", "tags": ["灵异", "狐仙"] },
+        { "rank": 10, "title": "一剑星河渡", "author": "公主不回家", "cover": "https://p1-tt.byteimg.com/img/novel/40.jpg", "description": "一剑斩断星河，渡尽苍生苦难。剑仙之路，由此开始...", "readCount": "200万", "tags": ["剑仙", "星河"] }
+      ]
+    },
+    {
+      "category": "悬疑",
+      "categoryId": "xuanyi",
+      "novels": [
+        { "rank": 1, "title": "十日终焉", "author": "杀虫队队员", "cover": "https://p1-tt.byteimg.com/img/novel/41.jpg", "description": "十日之内，终焉将至。我能做的，只有活下去...", "readCount": "5800万", "tags": ["悬疑", "无限流", "智斗"] },
+        { "rank": 2, "title": "神秘复苏", "author": "佛前献花", "cover": "https://p1-tt.byteimg.com/img/novel/42.jpg", "description": "五浊恶世，地狱已空，厉鬼复苏，人间如狱。这个世界鬼出现了......", "readCount": "6200万", "tags": ["恐怖", "灵异", "智斗"] },
+        { "rank": 3, "title": "请叫我鬼差大人", "author": "徐二家的猫", "cover": "https://p1-tt.byteimg.com/img/novel/43.jpg", "description": "人间有鬼，地府有序。而我，是连接阴阳的鬼差大人...", "readCount": "2100万", "tags": ["灵异", "地府", "搞笑"] },
+        { "rank": 4, "title": "诡舍", "author": "夜来风雨声丶", "cover": "https://p1-tt.byteimg.com/img/novel/44.jpg", "description": "诡异的宿舍，诡异的事件。生存，是唯一的目标...", "readCount": "380万", "tags": ["恐怖", "悬疑", "生存"] },
+        { "rank": 5, "title": "从前有座镇妖关", "author": "徐二家的猫", "cover": "https://p1-tt.byteimg.com/img/novel/45.jpg", "description": "镇妖关外，妖魔横行。镇妖关内，人族守护...", "readCount": "250万", "tags": ["镇妖", "守护"] },
+        { "rank": 6, "title": "至死方休！", "author": "六个葫芦", "cover": "https://p1-tt.byteimg.com/img/novel/46.jpg", "description": "死亡不是终点，而是新的开始。至死方休，战斗不止...", "readCount": "180万", "tags": ["悬疑", "战斗"] },
+        { "rank": 7, "title": "怪谈游戏", "author": "绝命时钟", "cover": "https://p1-tt.byteimg.com/img/novel/47.jpg", "description": "怪谈游戏开始，你能活过几轮？", "readCount": "120万", "tags": ["怪谈", "游戏"] },
+        { "rank": 8, "title": "恐怖复苏：我在诡异世界封神", "author": "天榜留名", "cover": "https://p1-tt.byteimg.com/img/novel/48.jpg", "description": "恐怖复苏，我在诡异世界中封神...", "readCount": "90万", "tags": ["恐怖", "封神"] },
+        { "rank": 9, "title": "诡异复苏：我的天赋有点妖", "author": "天榜留名", "cover": "https://p1-tt.byteimg.com/img/novel/49.jpg", "description": "诡异复苏，我的天赋有点妖...", "readCount": "85万", "tags": ["诡异", "天赋"] },
+        { "rank": 10, "title": "灵异复苏：开局召唤黑白无常", "author": "天榜留名", "cover": "https://p1-tt.byteimg.com/img/novel/50.jpg", "description": "灵异复苏，开局召唤黑白无常...", "readCount": "80万", "tags": ["灵异", "召唤"] }
+      ]
+    },
+    {
+      "category": "历史",
+      "categoryId": "lishi",
+      "novels": [
+        { "rank": 1, "title": "我祖父是朱元璋", "author": "岁月神偷", "cover": "https://p1-tt.byteimg.com/img/novel/51.jpg", "description": "穿越成朱元璋的孙子，我该怎么办？", "readCount": "2800万", "tags": ["明朝", "穿越", "朝堂"] },
+        { "rank": 2, "title": "帝国第一驸马", "author": "天香瞳", "cover": "https://p1-tt.byteimg.com/img/novel/52.jpg", "description": "成为帝国第一驸马，权倾朝野...", "readCount": "1800万", "tags": ["驸马", "权谋"] },
+        { "rank": 3, "title": "冒姓琅琊", "author": "王孤独", "cover": "https://p1-tt.byteimg.com/img/novel/53.jpg", "description": "冒姓琅琊王氏，在南北朝的时代中生存...", "readCount": "320万", "tags": ["南北朝", "世家"] },
+        { "rank": 4, "title": "重生：回到1983当富翁", "author": "恩怨各一半", "cover": "https://p1-tt.byteimg.com/img/novel/54.jpg", "description": "重生回到1983年，我要当富翁...", "readCount": "450万", "tags": ["重生", "80年代", "经商"] },
+        { "rank": 5, "title": "1987：今夜不眠", "author": "房车齐全", "cover": "https://p1-tt.byteimg.com/img/novel/55.jpg", "description": "回到1987年，这个时代遍地是黄金...", "readCount": "380万", "tags": ["重生", "80年代", "经商"] },
+        { "rank": 6, "title": "皇家金牌县令", "author": "板面王仔", "cover": "https://p1-tt.byteimg.com/img/novel/56.jpg", "description": "穿越成县令，我有皇家金牌护体...", "readCount": "320万", "tags": ["县令", "搞笑"] },
+        { "rank": 7, "title": "废物皇子：为何要逼我做皇帝？", "author": "80年代的风", "cover": "https://p1-tt.byteimg.com/img/novel/57.jpg", "description": "我只想当个废物皇子，为什么要逼我做皇帝？", "readCount": "280万", "tags": ["皇子", "权谋", "搞笑"] },
+        { "rank": 8, "title": "莫若凌霄", "author": "月关", "cover": "https://p1-tt.byteimg.com/img/novel/58.jpg", "description": "凌霄之志，莫可阻挡。在历史的长河中，留下自己的印记...", "readCount": "150万", "tags": ["架空历史", "权谋"] },
+        { "rank": 9, "title": "部族荣光", "author": "丧狐", "cover": "https://p1-tt.byteimg.com/img/novel/59.jpg", "description": "部族的荣光，由我来守护...", "readCount": "120万", "tags": ["部落", "草原"] },
+        { "rank": 10, "title": "惊鸿", "author": "一夕烟雨", "cover": "https://p1-tt.byteimg.com/img/novel/60.jpg", "description": "惊鸿一瞥，便是永恒。历史中的惊鸿，谁来书写？", "readCount": "180万", "tags": ["架空历史", "武侠"] }
+      ]
+    }
+  ]
+}
