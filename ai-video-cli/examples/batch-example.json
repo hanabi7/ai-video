@@ -1,0 +1,29 @@
+{
+  "tasks": [
+    {
+      "type": "image",
+      "request": {
+        "prompt": "一只可爱的橘猫坐在月亮上，星空背景",
+        "style": "anime",
+        "ratio": "1:1"
+      }
+    },
+    {
+      "type": "image",
+      "request": {
+        "prompt": "赛博朋克城市街道，霓虹灯光，雨天",
+        "style": "cyberpunk",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "video",
+      "request": {
+        "prompt": "无人机在城市上空飞行，俯瞰夜景",
+        "duration": 5,
+        "platform": "dreamina",
+        "aspect_ratio": "16:9"
+      }
+    }
+  ]
+}

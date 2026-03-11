@@ -1,0 +1,79 @@
+{
+  "project": "全球冰封末日安全屋",
+  "style": "cinematic",
+  "ratio": "16:9",
+  "tasks": [
+    {
+      "type": "image",
+      "name": "scene-01-末日降临",
+      "request": {
+        "prompt": "Satellite view of Earth completely frozen, cities covered in ice and snow, apocalyptic winter landscape, cinematic lighting, dramatic atmosphere, 8k quality",
+        "style": "cinematic",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "image",
+      "name": "scene-02-主角准备",
+      "request": {
+        "prompt": "Young man checking equipment in underground bunker basement, shelves of survival supplies, high-tech gadgets, emergency lights, serious expression, cinematic composition",
+        "style": "cinematic",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "image",
+      "name": "scene-03-安全屋入口",
+      "request": {
+        "prompt": "Massive 30cm thick steel blast door, fingerprint scanner, heavy duty hinges, underground bunker entrance, industrial design, dramatic lighting from inside",
+        "style": "cinematic",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "image",
+      "name": "scene-04-生活区",
+      "request": {
+        "prompt": "Cozy underground bunker living room, fireplace burning, green plants, warm lighting 25 degrees, comfortable sofa, modern survival shelter interior, contrast with frozen world outside",
+        "style": "cinematic",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "image",
+      "name": "scene-05-储藏室",
+      "request": {
+        "prompt": "Underground bunker storage room, neatly organized survival supplies, canned food shelves, water containers, medical supplies, prepper storage, cinematic lighting",
+        "style": "cinematic",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "image",
+      "name": "scene-06-外面的世界",
+      "request": {
+        "prompt": "View from underground bunker observation window, frozen post-apocalyptic world outside, ice-covered ruins, abandoned frozen cars, snowstorm, desolate atmosphere",
+        "style": "cinematic",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "image",
+      "name": "scene-07-安全屋娱乐",
+      "request": {
+        "prompt": "Young man relaxing in luxury underground bunker, watching movie on big screen, drinking tea, comfortable living space, warm atmosphere, apocalypse leisure",
+        "style": "cinematic",
+        "ratio": "16:9"
+      }
+    },
+    {
+      "type": "image",
+      "name": "scene-08-结尾希望",
+      "request": {
+        "prompt": "Underground bunker with indoor garden, vegetables growing under grow lights, sunlight streaming through window, contrast with frozen apocalypse outside, hope and survival theme",
+        "style": "cinematic",
+        "ratio": "16:9"
+      }
+    }
+  ]
+}

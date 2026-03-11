@@ -1,0 +1,15 @@
+node_modules/
+dist/
+build/
+*.log
+.DS_Store
+.env
+.env.local
+__pycache__/
+*.pyc
+uploads/
+outputs/
+*.wav
+*.mp3
+models/checkpoints/
+models/pretrained/
